@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OdontoPluz - Sistema de Agendamiento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0d3b66;
+            --primary-light: #1a5490;
+            --secondary: #6b7280;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #1f2937;
+            --border: #e5e7eb;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background-color: var(--light);
+            line-height: 1.6;
+        }
+
+        /* HEADER SIMPLIFICADO */
+        header {
+            background: var(--white);
+            padding: 0;
+        }
+
+        .header-banner {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            padding: 1rem;
+            min-height: 150px;
+        }
+
+        .header-banner img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .header-logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            background: var(--white);
+            border-bottom: 3px solid var(--primary);
+            position: relative;
+        }
+
+        .logo-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 4px 12px rgba(13, 59, 102, 0.2);
+            overflow: hidden;
+            position: relative;
+            margin-top: -50px;
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .business-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        /* MAIN CONTAINER - MOBILE */
+        .container {
+            padding: 0.8rem;
+            max-width: 100%;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--white);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.2rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(13, 59, 102, 0.15);
+        }
+
+        .hero h1 {
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 0.85rem;
+            opacity: 0.95;
+        }
+
+        /* SECCIÓN DE DOCTORES - CARRUSEL */
+        .doctores-section {
+            margin-bottom: 1rem;
+        }
+
+        .doctores-section h2 {
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .doctores-carrusel {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.8rem;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .doctores-carrusel::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .doctores-carrusel::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .doctores-carrusel::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .doctor-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            min-width: 200px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+        }
+
+        .doctor-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(13, 59, 102, 0.15);
+        }
+
+        .doctor-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .doctor-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .doctor-info {
+            padding: 1rem;
+        }
+
+        .doctor-name {
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            line-height: 1.2;
+        }
+
+        .doctor-specialty {
+            color: var(--primary-light);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .skill-badge {
+            background: var(--light);
+            color: var(--primary);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* HORARIOS - CARRUSEL */
+        .horarios-section {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .horarios-section h2 {
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .horarios-carrusel {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .horarios-carrusel::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .horarios-carrusel::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .horarios-carrusel::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .horario-card {
+            background: var(--light);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            min-width: 160px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            text-align: center;
+        }
+
+        .horario-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .horario-card p {
+            color: var(--secondary);
+            font-size: 0.8rem;
+        }
+
+        .horario-card strong {
+            color: var(--text);
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* SECCIÓN DE AGENDAMIENTO */
+        .booking-section {
+            background: var(--white);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .booking-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .booking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            position: relative;
+            gap: 0.3rem;
+        }
+
+        .booking-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            min-width: 50px;
+        }
+
+        .step-number {
+            width: 35px;
+            height: 35px;
+            background: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.3rem;
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .step.completed .step-number {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.6rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* BOOKING CONTENT */
+        .booking-content {
+            display: none;
+        }
+
+        .booking-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* GRID DE SELECCIÓN - SERVICIOS (Cuadrados 2x línea) */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .selection-item {
+            display: flex;
+            flex-direction: column;
+            padding: 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 220px;
+        }
+
+        .selection-item-image {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .selection-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .selection-item:active {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .selection-item.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .selection-item h3 {
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .selection-item .price {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            font-size: 0.8rem;
+        }
+
+        .selection-item.selected .price {
+            color: var(--white);
+        }
+
+        .selection-item .duration {
+            font-size: 0.75rem;
+            color: var(--secondary);
+        }
+
+        .selection-item.selected .duration {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .selection-item .consult {
+            color: var(--warning);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .selection-item.selected .consult {
+            color: #ffd699;
+        }
+
+        /* GRID DOCTORES SELECCIÓN (Cuadrados) */
+        .doctores-select-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .doctor-select-item {
+            display: flex;
+            flex-direction: column;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+            overflow: hidden;
+            text-align: center;
+            min-height: 200px;
+        }
+
+        .doctor-select-image {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .doctor-select-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .doctor-select-info {
+            padding: 0.4rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .doctor-select-item:active {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .doctor-select-item.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .doctor-select-item h3 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            line-height: 1.1;
+        }
+
+        .doctor-select-item p {
+            font-size: 0.65rem;
+            color: var(--secondary);
+        }
+
+        .doctor-select-item.selected p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* FORMULARIO */
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .form-group input[type="date"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="text"] {
+            padding: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 59, 102, 0.1);
+        }
+
+        /* CALENDARIO - SEMANAL CON SCROLL */
+        .calendar-week {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+
+        .calendar-week::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .calendar-week::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .calendar-week::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .calendar-day {
+            min-width: 70px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+            font-weight: 500;
+            scroll-snap-align: start;
+        }
+
+        .calendar-day .day-name {
+            font-size: 0.7rem;
+            color: var(--secondary);
+            margin-bottom: 0.2rem;
+        }
+
+        .calendar-day .day-number {
+            font-size: 1.2rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .calendar-day:active:not(.disabled) {
+            background: #f0f4ff;
+            border-color: var(--primary);
+        }
+
+        .calendar-day.disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+            background: var(--light);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .calendar-day.selected .day-name {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* HORARIOS */
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            padding: 0.7rem 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .time-slot:active:not(.unavailable) {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .time-slot.unavailable {
+            cursor: not-allowed;
+            opacity: 0.3;
+            background: var(--light);
+        }
+
+        .time-slot.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* RESUMEN */
+        .summary-box {
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .summary-label {
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+            max-width: 50%;
+        }
+
+        /* BOTONES */
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            background: var(--secondary);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-secondary:active {
+            background: #4b5563;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+            font-size: 1rem;
+            padding: 1rem;
+            width: 100%;
+            min-width: unset;
+            flex: unset;
+        }
+
+        .btn-success:active {
+            background: #059669;
+        }
+
+        .btn-success:disabled {
+            background: var(--secondary);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 90%;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-icon {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-content h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .modal-content p {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--text);
+            color: var(--white);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+
+        footer p {
+            margin: 0.3rem 0;
+        }
+
+        /* RESPONSIVE */
+        @media (min-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .selection-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .doctores-select-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .time-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            button {
+                min-width: 150px;
+            }
+
+            .button-group {
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .container {
+                padding: 2rem;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .selection-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .doctores-select-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .time-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER CON BANNER Y LOGO -->
+    <header>
+        <div class="header-banner">
+            <!-- Aquí irá la imagen del banner 1200x600px -->
+            <span style="color: white; font-size: 1rem;">Tu Banner 1200x600px irá aquí</span>
+        </div>
+        <div class="header-logo-section">
+            <div class="logo-circle">
+                🦷
+                <!-- Aquí irá tu foto/logo -->
+            </div>
+            <div class="business-name">OdontoPluz</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- HERO -->
+        <div class="hero">
+            <h1>Agenda tu Cita 🦷</h1>
+            <p>Sonrisas saludables y hermosas. Contamos con doctores especialistas y la mejor atención odontológica para ti y tu familia.</p>
+        </div>
+
+        <!-- DOCTORES - CARRUSEL (SECCIÓN 1) -->
+        <div class="doctores-section">
+            <h2>👨‍⚕️ Nuestros Especialistas</h2>
+            <div class="doctores-carrusel" id="doctoresGrid">
+                <!-- Se populate con JavaScript -->
+            </div>
+        </div>
+
+        <!-- AGENDAMIENTO (SECCIÓN 2) -->
+        <div class="booking-section" id="bookingSection">
+            <h2>📅 Agendar tu Cita</h2>
+
+            <!-- PROGRESS STEPS -->
+            <div class="booking-steps">
+                <div class="step completed">
+                    <div class="step-number">✓</div>
+                    <div class="step-label">Inicio</div>
+                </div>
+                <div class="step active" id="stepServicio">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Servicio</div>
+                </div>
+                <div class="step" id="stepDoctor">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Doctor</div>
+                </div>
+                <div class="step" id="stepFecha">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Fecha y Hora</div>
+                </div>
+                <div class="step" id="stepDatos">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Datos</div>
+                </div>
+            </div>
+
+            <!-- PASO 1: SERVICIO (CUADRADOS 2x) -->
+            <div class="booking-content active" id="content1">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Selecciona el Servicio que Deseas</h3>
+                <div class="selection-grid" id="serviciosGrid">
+                    <!-- Se populate con JavaScript -->
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="irPaso(2)" id="btnServicio" disabled>Continuar</button>
+                </div>
+            </div>
+
+            <!-- PASO 2: DOCTOR (CUADRADOS) -->
+            <div class="booking-content" id="content2">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Selecciona tu Doctor Preferido</h3>
+                <div class="doctores-select-grid" id="doctoresSelectGrid">
+                    <!-- Se populate con JavaScript -->
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="irPaso(1)">Atrás</button>
+                    <button class="btn-primary" onclick="irPaso(3)" id="btnDoctor" disabled>Continuar</button>
+                </div>
+            </div>
+
+            <!-- PASO 3: FECHA Y HORA -->
+            <div class="booking-content" id="content3">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Selecciona Fecha y Hora</h3>
+                
+                <div class="form-group">
+                    <label>Elige una Semana</label>
+                </div>
+
+                <div class="calendar-week" id="calendarWeek">
+                    <!-- Se populate con JavaScript -->
+                </div>
+
+                <div class="form-group">
+                    <label id="timeLabel" style="display: none;">Selecciona una Hora</label>
+                    <div class="time-grid" id="timeGrid">
+                        <!-- Se populate con JavaScript -->
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="irPaso(2)">Atrás</button>
+                    <button class="btn-primary" onclick="irPaso(4)" id="btnFecha" disabled>Continuar</button>
+                </div>
+            </div>
+
+            <!-- PASO 4: DATOS -->
+            <div class="booking-content" id="content4">
+                <div class="summary-box">
+                    <div class="summary-item">
+                        <span class="summary-label">Servicio:</span>
+                        <span class="summary-value" id="summaryServicio">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Doctor:</span>
+                        <span class="summary-value" id="summaryDoctor">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Fecha y Hora:</span>
+                        <span class="summary-value" id="summaryFecha">-</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Completa tu Información</h3>
+                <form class="booking-form" onsubmit="confirmarCita(event)">
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono *</label>
+                        <input type="tel" id="telefono" name="telefono" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="asunto">Mensaje (Opcional)</label>
+                        <input type="text" id="asunto" name="asunto" placeholder="Cuéntanos cualquier detalle adicional">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-secondary" onclick="irPaso(3)">Atrás</button>
+                        <button type="submit" class="btn-success">✓ Confirmar Cita</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- HORARIOS (SECCIÓN 3) -->
+        <div class="horarios-section">
+            <h2>⏰ Horarios de Atención</h2>
+            <div class="horarios-carrusel">
+                <div class="horario-card">
+                    <h3>Lunes a Viernes</h3>
+                    <strong>8:00 AM - 6:00 PM</strong>
+                    <p>Atención completa</p>
+                </div>
+                <div class="horario-card">
+                    <h3>Sábado</h3>
+                    <strong>9:30 AM - 3:00 PM</strong>
+                    <p>Disponibilidad limitada</p>
+                </div>
+                <div class="horario-card">
+                    <h3>Domingo</h3>
+                    <strong>Cerrado</strong>
+                    <p>Descansa con nosotros</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CALENDARIO DE GOOGLE -->
+    <div style="background: var(--light); padding: 2rem 1rem;">
+        <div class="container">
+            <h2 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.3rem; text-align: center;">📅 Nuestro Calendario</h2>
+            <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <iframe src="https://calendar.google.com/calendar/embed?src=6560d8ca3b239991c7ddef8105f741c74e0a77522c3308930bc8b37e9144a157%40group.calendar.google.com&ctz=America%2FDenver" style="border: 0; width: 100%; height: 500px;" frameborder="0" scrolling="no"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">✓</div>
+            <h3 id="modalTitle">Cita Confirmada</h3>
+            <p id="modalMessage">Tu cita ha sido confirmada correctamente.</p>
+            <button class="btn-primary" onclick="cerrarModal()" style="width: 100%;">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p><strong>OdontoPluz</strong></p>
+        <p>Av. Principal entrada al barrio 23 de enero, A 50 metros del colegio Fermín Toro</p>
+        <p>Guanare - Portuguesa | 📞 0412.141.66.31</p>
+        <p style="margin-top: 0.8rem; font-size: 0.8rem; opacity: 0.8;">© 2024 OdontoPluz. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // ====== DATOS DEL CONSULTORIO ======
+        const consultorio = {
+            nombre: 'OdontoPluz',
+            whatsapp: '+584121416631',
+            ubicacion: 'Av. Principal entrada al barrio 23 de enero, A 50 metros del colegio Fermín Toro, Guanare - Portuguesa',
+            calendarId: '6560d8ca3b239991c7ddef8105f741c74e0a77522c3308930bc8b37e9144a157@group.calendar.google.com',
+            appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwUdmof0Sy08-FyjwhG4HQR0U31eSOXY0RJRtBtf9B_sZkcfMIRenAg0HOlRDdMDQ3FNg/exec',
+            horarios: {
+                'lunes': { inicio: '08:00', fin: '18:00' },
+                'martes': { inicio: '08:00', fin: '18:00' },
+                'miercoles': { inicio: '08:00', fin: '18:00' },
+                'jueves': { inicio: '08:00', fin: '18:00' },
+                'viernes': { inicio: '08:00', fin: '18:00' },
+                'sabado': { inicio: '09:30', fin: '15:00' },
+                'domingo': null
+            }
+        };
+
+        const servicios = [
+            { id: 1, nombre: 'Consulta Diagnóstica', duracion: 30, precio: 20, tipo: 'publico', activo: true },
+            { id: 2, nombre: 'Limpieza Dental', duracion: 30, precio: 30, tipo: 'publico', activo: true },
+            { id: 3, nombre: 'Controles de Ortodoncia', duracion: 40, precio: 30, tipo: 'publico', activo: true },
+            { id: 4, nombre: 'Prótesis Dentales', duracion: 40, precio: null, tipo: 'consulta', activo: true },
+            { id: 5, nombre: 'Cirugía Dentales', duracion: 60, precio: null, tipo: 'consulta', activo: true },
+            { id: 6, nombre: 'Radiografía Dental', duracion: 20, precio: 10, tipo: 'publico', activo: true },
+            { id: 7, nombre: 'Blanqueamiento Dental', duracion: 60, precio: 60, tipo: 'publico', activo: true },
+            { id: 8, nombre: 'Diseños de Sonrisa', duracion: 60, precio: null, tipo: 'consulta', activo: true },
+            { id: 9, nombre: 'Estética Dental', duracion: 60, precio: null, tipo: 'consulta', activo: true },
+            { id: 10, nombre: 'Restauraciones Dentales', duracion: 45, precio: null, tipo: 'consulta', activo: true }
+        ];
+
+        const doctores = [
+            {
+                id: 1,
+                nombre: 'Dra. Ma. Alejandra Cabrera',
+                especialidad: 'Odontología Estética',
+                descripcion: 'Especialista en diseño de sonrisa y estética dental con más de 12 años de experiencia. Apasionada por transformar sonrisas y mejorar la autoestima de sus pacientes.',
+                especialidades: ['Diseño de Sonrisa', 'Estética Dental', 'Blanqueamiento'],
+                foto: '👩‍⚕️',
+                activo: true,
+                disponible: ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'],
+                citas: []
+            },
+            {
+                id: 2,
+                nombre: 'Dra. Eliana Álvarez',
+                especialidad: 'Odontología General e Infantil',
+                descripcion: 'Odontóloga general con especialidad en pacientes pediátricos. Hace que los niños se sientan cómodos y seguros en cada consulta. Excelente con toda la familia.',
+                especialidades: ['Limpieza Dental', 'Consulta Diagnóstica', 'Odontología Infantil'],
+                foto: '👩‍⚕️',
+                activo: true,
+                disponible: ['lunes', 'martes', 'miercoles', 'viernes', 'sabado'],
+                citas: []
+            },
+            {
+                id: 3,
+                nombre: 'Dra. Dorellys Gómez',
+                especialidad: 'Odontología General e Infantil',
+                descripcion: 'Profesional comprometida con la salud bucal integral. Experiencia en tratamientos preventivos y educación en higiene oral para todas las edades.',
+                especialidades: ['Limpieza Dental', 'Radiografía Dental', 'Consulta Diagnóstica'],
+                foto: '👩‍⚕️',
+                activo: true,
+                disponible: ['martes', 'miercoles', 'jueves', 'viernes', 'sabado'],
+                citas: []
+            }
+        ];
+
+        // ====== VARIABLES DE ESTADO ======
+        let estadoBooking = {
+            pasoActual: 1,
+            servicioSeleccionado: null,
+            doctorSeleccionado: null,
+            fechaSeleccionada: null,
+            horaSeleccionada: null,
+            nombre: '',
+            email: '',
+            telefono: '',
+            asunto: ''
+        };
+
+        let currentWeekStart = new Date();
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+
+        // ====== INICIALIZACIÓN ======
+        function inicializar() {
+            renderizarDoctoresSeccion();
+            renderizarServicios();
+            renderizarDoctoresSeleccion();
+            renderizarCalendarioSemanal();
+        }
+
+        // ====== RENDER: DOCTORES SECCIÓN ======
+        function renderizarDoctoresSeccion() {
+            const grid = document.getElementById('doctoresGrid');
+            grid.innerHTML = doctores
+                .filter(d => d.activo)
+                .map(doctor => `
+                    <div class="doctor-card" onclick="verPerfilDoctor(${doctor.id})">
+                        <div class="doctor-image">${doctor.foto}</div>
+                        <div class="doctor-info">
+                            <div class="doctor-name">${doctor.nombre}</div>
+                            <div class="doctor-specialty">${doctor.especialidad}</div>
+                            <div class="doctor-skills">
+                                ${doctor.especialidades.slice(0, 2).map(e => `<span class="skill-badge">${e}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // ====== RENDER: SERVICIOS (CUADRADOS) ======
+        function renderizarServicios() {
+            const grid = document.getElementById('serviciosGrid');
+            grid.innerHTML = servicios
+                .filter(s => s.activo)
+                .map(servicio => `
+                    <div class="selection-item" onclick="seleccionarServicio(${servicio.id})">
+                        <div class="selection-item-image">
+                            <!-- Aquí irá imagen 600x600px -->
+                        </div>
+                        <h3>${servicio.nombre}</h3>
+                        ${servicio.precio ? `<div class="price">$${servicio.precio}</div>` : '<div class="consult">Consultar</div>'}
+                        <div class="duration">⏱️ ${servicio.duracion} min</div>
+                    </div>
+                `).join('');
+        }
+
+        // ====== RENDER: DOCTORES SELECCIÓN (CUADRADOS) ======
+        function renderizarDoctoresSeleccion() {
+            const grid = document.getElementById('doctoresSelectGrid');
+            grid.innerHTML = doctores
+                .filter(d => d.activo)
+                .map(doctor => `
+                    <div class="doctor-select-item" onclick="seleccionarDoctor(${doctor.id})">
+                        <div class="doctor-select-image">${doctor.foto}</div>
+                        <div class="doctor-select-info">
+                            <h3>${doctor.nombre.split(' ')[1] || doctor.nombre}</h3>
+                            <p>${doctor.especialidad}</p>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // ====== RENDER: CALENDARIO SEMANAL ======
+        function renderizarCalendarioSemanal() {
+            const container = document.getElementById('calendarWeek');
+            container.innerHTML = '';
+
+            // Generar 4 semanas
+            for (let semana = 0; semana < 4; semana++) {
+                for (let dia = 0; dia < 7; dia++) {
+                    const fecha = new Date(currentWeekStart);
+                    fecha.setDate(fecha.getDate() + (semana * 7) + dia);
+
+                    const fechaStr = fecha.toISOString().split('T')[0];
+                    const esDiaActual = fechaStr === new Date().toISOString().split('T')[0];
+
+                    const nombreDia = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][fecha.getDay()];
+                    const numeroDia = fecha.getDate();
+
+                    const elemento = document.createElement('div');
+                    elemento.className = `calendar-day ${esDiaActual ? 'selected' : ''}`;
+                    elemento.innerHTML = `
+                        <div class="day-name">${nombreDia}</div>
+                        <div class="day-number">${numeroDia}</div>
+                    `;
+                    elemento.onclick = () => seleccionarFecha(fechaStr);
+
+                    container.appendChild(elemento);
+                }
+            }
+        }
+
+        // ====== SELECCIONAR SERVICIO ======
+        function seleccionarServicio(id) {
+            estadoBooking.servicioSeleccionado = id;
+            
+            document.querySelectorAll('#serviciosGrid .selection-item').forEach((el, idx) => {
+                el.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+            document.getElementById('btnServicio').disabled = false;
+            
+            // Scroll hacia el botón continuar
+            setTimeout(() => {
+                document.getElementById('btnServicio').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // ====== SELECCIONAR DOCTOR ======
+        function seleccionarDoctor(id) {
+            estadoBooking.doctorSeleccionado = id;
+            
+            document.querySelectorAll('#doctoresSelectGrid .doctor-select-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+            document.getElementById('btnDoctor').disabled = false;
+            
+            // Scroll hacia el botón continuar
+            setTimeout(() => {
+                document.getElementById('btnDoctor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // ====== SELECCIONAR FECHA ======
+        function seleccionarFecha(fechaStr) {
+            estadoBooking.fechaSeleccionada = fechaStr;
+            
+            document.querySelectorAll('#calendarWeek .calendar-day').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+            document.getElementById('timeLabel').style.display = 'block';
+            
+            renderizarHorarios();
+            
+            // Scroll hacia los horarios disponibles
+            setTimeout(() => {
+                document.getElementById('timeLabel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // ====== RENDER: HORARIOS ======
+        function renderizarHorarios() {
+            const fecha = new Date(estadoBooking.fechaSeleccionada);
+            const diaSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'][fecha.getDay()];
+            
+            const horarioConsultorio = consultorio.horarios[diaSemana];
+            
+            if (!horarioConsultorio) {
+                document.getElementById('timeGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--secondary);">No hay horarios disponibles este día</p>';
+                return;
+            }
+
+            const [inicioHora, inicioMin] = horarioConsultorio.inicio.split(':').map(Number);
+            const [finHora, finMin] = horarioConsultorio.fin.split(':').map(Number);
+
+            let horarios = [];
+            for (let h = inicioHora; h < finHora; h++) {
+                horarios.push(`${String(h).padStart(2, '0')}:00`);
+                if (h < finHora - 1) {
+                    horarios.push(`${String(h).padStart(2, '0')}:30`);
+                }
+            }
+
+            const doctor = doctores.find(d => d.id === estadoBooking.doctorSeleccionado);
+            const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
+
+            const grid = document.getElementById('timeGrid');
+            grid.innerHTML = horarios.map(hora => {
+                const ocupado = doctor.citas.some(cita => 
+                    cita.fecha === estadoBooking.fechaSeleccionada && cita.hora === hora
+                );
+
+                return `
+                    <div class="time-slot ${ocupado ? 'unavailable' : ''}" 
+                         onclick="${ocupado ? '' : `seleccionarHora('${hora}')`}">
+                        ${hora}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ====== SELECCIONAR HORA ======
+        function seleccionarHora(hora) {
+            estadoBooking.horaSeleccionada = hora;
+            
+            document.querySelectorAll('#timeGrid .time-slot').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+            document.getElementById('btnFecha').disabled = false;
+            
+            actualizarResumen();
+            
+            // Scroll hacia el botón continuar
+            setTimeout(() => {
+                document.getElementById('btnFecha').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // ====== ACTUALIZAR RESUMEN ======
+        function actualizarResumen() {
+            const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
+            const doctor = doctores.find(d => d.id === estadoBooking.doctorSeleccionado);
+            const fecha = new Date(estadoBooking.fechaSeleccionada);
+            const fechaFormato = fecha.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            document.getElementById('summaryServicio').textContent = servicio.nombre;
+            document.getElementById('summaryDoctor').textContent = doctor.nombre;
+            document.getElementById('summaryFecha').textContent = `${fechaFormato} a las ${estadoBooking.horaSeleccionada}h`;
+        }
+
+        // ====== NAVEGAR PASOS ======
+        function irPaso(paso) {
+            estadoBooking.pasoActual = paso;
+            actualizarUI();
+        }
+
+        // ====== ACTUALIZAR UI ======
+        function actualizarUI() {
+            document.querySelectorAll('.step').forEach((el, idx) => {
+                el.classList.remove('active', 'completed');
+                const stepNum = idx;
+                if (stepNum < estadoBooking.pasoActual) {
+                    el.classList.add('completed');
+                } else if (stepNum === estadoBooking.pasoActual - 1) {
+                    el.classList.add('active');
+                }
+            });
+
+            for (let i = 1; i <= 4; i++) {
+                const content = document.getElementById(`content${i}`);
+                if (content) {
+                    content.classList.remove('active');
+                    if (i === estadoBooking.pasoActual) {
+                        content.classList.add('active');
+                    }
+                }
+            }
+
+            document.querySelector('.booking-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ====== CONFIRMAR CITA ======
+        function confirmarCita(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+
+            if (!nombre || !email || !telefono) {
+                mostrarModal('⚠️', 'Datos Incompletos', 'Por favor completa todos los campos requeridos.');
+                return;
+            }
+
+            estadoBooking.nombre = nombre;
+            estadoBooking.email = email;
+            estadoBooking.telefono = telefono;
+            estadoBooking.asunto = document.getElementById('asunto').value.trim();
+
+            const doctor = doctores.find(d => d.id === estadoBooking.doctorSeleccionado);
+            const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
+            
+            doctor.citas.push({
+                fecha: estadoBooking.fechaSeleccionada,
+                hora: estadoBooking.horaSeleccionada,
+                duracion: servicio.duracion,
+                paciente: nombre,
+                telefono: telefono
+            });
+
+            // ✅ AGREGAR EVENTO AL CALENDARIO AQUÍ (cuando confirma la cita)
+            const fechaInicio = new Date(estadoBooking.fechaSeleccionada);
+            const [hora, minutos] = estadoBooking.horaSeleccionada.split(':').map(Number);
+            fechaInicio.setHours(hora, minutos, 0, 0);
+            
+            const fechaFin = new Date(fechaInicio);
+            fechaFin.setMinutes(fechaFin.getMinutes() + servicio.duracion);
+
+            console.log('✅ Creando evento en calendario desde confirmarCita');
+            agregarAlCalendario({
+                servicio: servicio.nombre,
+                doctor: doctor.nombre,
+                paciente: nombre,
+                telefono: telefono,
+                ubicacion: consultorio.ubicacion,
+                fechaInicio: fechaInicio.toISOString(),
+                fechaFin: fechaFin.toISOString()
+            });
+
+            const fecha = new Date(estadoBooking.fechaSeleccionada);
+            const fechaFormato = fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const mensajeWhatsApp = `Hola OdontoPluz, acabo de agendar mi cita para ${servicio.nombre}, el día ${fechaFormato} a las ${estadoBooking.horaSeleccionada}h.`;
+            const urlWhatsApp = `https://wa.me/${consultorio.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+
+            const formatoGoogleCalendar = (date) => {
+                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            const descripcion = `Paciente: ${nombre}\nTeléfono: ${telefono}\nServicio: ${servicio.nombre}\nDoctor: ${doctor.nombre}`;
+            
+            const urlGoogleCalendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Cita - ${servicio.nombre} - ${doctor.nombre}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcion)}&location=${encodeURIComponent(consultorio.ubicacion)}&ctz=America/Caracas`;
+
+            mostrarModalConOpciones(servicio, doctor, fechaFormato, urlWhatsApp, urlGoogleCalendar, nombre);
+        }
+
+        // ====== MODAL CON OPCIONES ======
+        function mostrarModalConOpciones(servicio, doctor, fechaFormato, urlWhatsApp, urlGoogleCalendar, nombre) {
+            const modal = document.getElementById('modal');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-icon">✅</div>
+                    <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem;">¡Cita Confirmada!</h3>
+                    <p style="color: var(--secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                        Tu cita para <strong>${servicio.nombre}</strong> con <strong>${doctor.nombre}</strong> el <strong>${fechaFormato}</strong> a las <strong>${estadoBooking.horaSeleccionada}h</strong> ha sido confirmada.
+                    </p>
+                    <p style="color: var(--text); margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 600;">
+                        Se agregó automáticamente a nuestro calendario. ✓
+                    </p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button onclick="abrirWhatsAppYGuardar('${urlWhatsApp}')" style="display: block; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                            💬 Confirmar por WhatsApp
+                        </button>
+                        <button onclick="cerrarModal()" style="padding: 1rem; background: var(--light); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            ✓ Listo
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        // ====== ABRIR WHATSAPP ======
+        function abrirWhatsAppYGuardar(urlWhatsApp) {
+            console.log('Abriendo WhatsApp...');
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        // ====== AGREGAR AL CALENDARIO (Silenciosamente) ======
+        function agregarAlCalendario(datos) {
+            if (!consultorio.appsScriptUrl) {
+                console.log('Apps Script URL no configurada');
+                return;
+            }
+
+            console.log('🔄 Intentando agregar evento al calendario...');
+            console.log('Datos a enviar:', datos);
+
+            // Método simple: enviar como parámetros GET en una imagen
+            // Google Apps Script lo procesa y crea el evento
+            const queryString = '?datos=' + encodeURIComponent(JSON.stringify(datos)) + '&t=' + Date.now();
+            const url = consultorio.appsScriptUrl + queryString;
+            
+            console.log('URL final:', url);
+
+            // Crear una imagen invisible que dispara el GET
+            const img = new Image();
+            img.onload = function() {
+                console.log('✅ Solicitud enviada al calendario correctamente');
+            };
+            img.onerror = function() {
+                console.log('⚠️ Imagen no cargó, pero solicitud se envió a Apps Script');
+            };
+            img.src = url;
+        }
+
+        // ====== MODAL ======
+        function mostrarModal(icon, title, message) {
+            const modal = document.getElementById('modal');
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-icon">${icon}</div>
+                    <h3 style="color: var(--primary);">${title}</h3>
+                    <p style="color: var(--secondary);">${message}</p>
+                    <button class="btn-primary" onclick="cerrarModal()" style="width: 100%;">Cerrar</button>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            resetearForm();
+        }
+
+        // ====== RESETEAR FORMULARIO ======
+        function resetearForm() {
+            estadoBooking = {
+                pasoActual: 1,
+                servicioSeleccionado: null,
+                doctorSeleccionado: null,
+                fechaSeleccionada: null,
+                horaSeleccionada: null,
+                nombre: '',
+                email: '',
+                telefono: '',
+                asunto: ''
+            };
+
+            document.getElementById('nombre').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('telefono').value = '';
+            document.getElementById('asunto').value = '';
+
+            actualizarUI();
+            renderizarServicios();
+            renderizarDoctoresSeleccion();
+        }
+
+        // ====== VER PERFIL DOCTOR ======
+        function verPerfilDoctor(id) {
+            const doctor = doctores.find(d => d.id === id);
+            let especialidades = doctor.especialidades.join(', ');
+            const modal = document.getElementById('modal');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-icon" style="font-size: 4rem; margin-bottom: 1rem;">${doctor.foto}</div>
+                    <h3 style="color: var(--primary); margin-bottom: 0.5rem; text-align: center;">${doctor.nombre}</h3>
+                    <p style="color: var(--primary-light); font-weight: 600; margin-bottom: 1rem; text-align: center;">${doctor.especialidad}</p>
+                    <p style="color: var(--secondary); margin-bottom: 1rem; text-align: justify;">${doctor.descripcion}</p>
+                    <p style="color: var(--text); font-weight: 600; margin-bottom: 0.5rem;">Especialidades:</p>
+                    <p style="color: var(--secondary); margin-bottom: 1.5rem;">${especialidades}</p>
+                    <button class="btn-primary" onclick="cerrarModal()" style="width: 100%;">Cerrar</button>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        // ====== INICIAR ======
+        window.addEventListener('load', inicializar);
+    </script>
+</body>
+</html>
