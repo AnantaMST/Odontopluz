@@ -1382,22 +1382,82 @@
             const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
 
             const grid = document.getElementById('timeGrid');
-            grid.innerHTML = horarios.map(hora => {
-                const ocupado = doctor.citas.some(cita => 
-                    cita.fecha === estadoBooking.fechaSeleccionada && cita.hora === hora
-                );
+            
+            // Verificar disponibilidad considerando la duración del servicio
+            const horariosDisponibles = horarios.map(hora => {
+                const [h, m] = hora.split(':').map(Number);
+                const minutosActuales = h * 60 + m;
+                const minutosFinal = minutosActuales + servicio.duracion;
+                
+                // Convertir a formato HH:MM
+                const horaFinal = `${String(Math.floor(minutosFinal / 60)).padStart(2, '0')}:${String(minutosFinal % 60).padStart(2, '0')}`;
+                
+                // Verificar si este horario se solapa con alguna cita existente
+                const ocupado = doctor.citas.some(cita => {
+                    const [citaH, citaM] = cita.hora.split(':').map(Number);
+                    const citaInicio = citaH * 60 + citaM;
+                    const citaFin = citaInicio + cita.duracion;
+                    
+                    // Hay conflicto si se solapan
+                    return (minutosActuales < citaFin && minutosFinal > citaInicio);
+                });
+                
+                // Verificar que el horario final no se pase del cierre
+                const fueroHorario = minutosFinal > (finHora * 60 + finMin);
+                
+                return { hora, ocupado, fueroHorario };
+            });
 
+            grid.innerHTML = horariosDisponibles
+                .filter(({ ocupado, fueroHorario }) => !ocupado && !fueroHorario)
+                .map(({ hora, ocupado, fueroHorario }) => {
                 return `
-                    <div class="time-slot ${ocupado ? 'unavailable' : ''}" 
-                         onclick="${ocupado ? '' : `seleccionarHora('${hora}')`}">
+                    <div class="time-slot" 
+                         onclick="seleccionarHora('${hora}')">
                         ${hora}
                     </div>
                 `;
             }).join('');
+            
+            // Si no hay horarios disponibles, mostrar mensaje
+            if (grid.innerHTML === '') {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--danger);">
+                        <p style="font-weight: 600; margin-bottom: 0.5rem;">❌ No hay horarios disponibles</p>
+                        <p style="font-size: 0.9rem; color: var(--secondary);">Este doctor tiene otro paciente en todos los horarios disponibles. Intenta con otra fecha u otro doctor.</p>
+                    </div>
+                `;
+            }
+            
+            // Si no hay ningún horario disponible, mostrar mensaje
+            if (horariosDisponibles.every(h => h.ocupado || h.fueroHorario)) {
+                grid.innerHTML += '<p style="grid-column: 1/-1; text-align: center; color: var(--danger); font-weight: 600; margin-top: 1rem;">⚠️ Este doctor no tiene disponibilidad este día. Elige otra fecha u otro doctor.</p>';
+                document.getElementById('btnFecha').disabled = true;
+            }
         }
 
         // ====== SELECCIONAR HORA ======
         function seleccionarHora(hora) {
+            const doctor = doctores.find(d => d.id === estadoBooking.doctorSeleccionado);
+            const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
+            
+            // Verificar si este horario está realmente disponible
+            const [h, m] = hora.split(':').map(Number);
+            const minutosActuales = h * 60 + m;
+            const minutosFinal = minutosActuales + servicio.duracion;
+            
+            const conflicto = doctor.citas.some(cita => {
+                const [citaH, citaM] = cita.hora.split(':').map(Number);
+                const citaInicio = citaH * 60 + citaM;
+                const citaFin = citaInicio + cita.duracion;
+                return (minutosActuales < citaFin && minutosFinal > citaInicio);
+            });
+            
+            if (conflicto) {
+                mostrarModal('⚠️', 'No Disponible', 'Este doctor tiene otro paciente a esta hora. Cambia de hora o de doctor.');
+                return;
+            }
+            
             estadoBooking.horaSeleccionada = hora;
             
             document.querySelectorAll('#timeGrid .time-slot').forEach(el => {
@@ -1408,6 +1468,12 @@
             document.getElementById('btnFecha').disabled = false;
             
             actualizarResumen();
+            
+            // Scroll hacia el botón continuar
+            setTimeout(() => {
+                document.getElementById('btnFecha').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
             
             // Scroll hacia el botón continuar
             setTimeout(() => {
@@ -1471,14 +1537,34 @@
                 return;
             }
 
+            const doctor = doctores.find(d => d.id === estadoBooking.doctorSeleccionado);
+            const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
+
+            // ✅ VALIDAR QUE EL HORARIO SIGA DISPONIBLE
+            const [hora, minutos] = estadoBooking.horaSeleccionada.split(':').map(Number);
+            const minutosActuales = hora * 60 + minutos;
+            const minutosFinal = minutosActuales + servicio.duracion;
+
+            const hayConflicto = doctor.citas.some(cita => {
+                if (cita.fecha !== estadoBooking.fechaSeleccionada) return false;
+                
+                const [citaH, citaM] = cita.hora.split(':').map(Number);
+                const citaInicio = citaH * 60 + citaM;
+                const citaFin = citaInicio + cita.duracion;
+                
+                return (minutosActuales < citaFin && minutosFinal > citaInicio);
+            });
+
+            if (hayConflicto) {
+                mostrarModal('❌', 'Horario No Disponible', 'Este doctor tiene otro paciente a esta hora. Cambia de hora o de doctor.');
+                return;
+            }
+
             estadoBooking.nombre = nombre;
             estadoBooking.email = email;
             estadoBooking.telefono = telefono;
             estadoBooking.asunto = document.getElementById('asunto').value.trim();
 
-            const doctor = doctores.find(d => d.id === estadoBooking.doctorSeleccionado);
-            const servicio = servicios.find(s => s.id === estadoBooking.servicioSeleccionado);
-            
             doctor.citas.push({
                 fecha: estadoBooking.fechaSeleccionada,
                 hora: estadoBooking.horaSeleccionada,
@@ -1489,7 +1575,7 @@
 
             // ✅ AGREGAR EVENTO AL CALENDARIO AQUÍ (cuando confirma la cita)
             const fechaInicio = new Date(estadoBooking.fechaSeleccionada);
-            const [hora, minutos] = estadoBooking.horaSeleccionada.split(':').map(Number);
+            const fechaInicioBD = new Date(estadoBooking.fechaSeleccionada);
             fechaInicio.setHours(hora, minutos, 0, 0);
             
             const fechaFin = new Date(fechaInicio);
