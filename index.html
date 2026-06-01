@@ -1129,72 +1129,130 @@
     </footer>
 
     <script>
-        // ====== DATOS DEL CONSULTORIO ======
-        const consultorio = {
-            nombre: 'OdontoPluz',
-            whatsapp: '+584121416631',
-            ubicacion: 'Av. Principal entrada al barrio 23 de enero, A 50 metros del colegio Fermín Toro, Guanare - Portuguesa',
-            calendarId: '6560d8ca3b239991c7ddef8105f741c74e0a77522c3308930bc8b37e9144a157@group.calendar.google.com',
-            appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwUdmof0Sy08-FyjwhG4HQR0U31eSOXY0RJRtBtf9B_sZkcfMIRenAg0HOlRDdMDQ3FNg/exec',
-            horarios: {
-                'lunes': { inicio: '08:00', fin: '18:00' },
-                'martes': { inicio: '08:00', fin: '18:00' },
-                'miercoles': { inicio: '08:00', fin: '18:00' },
-                'jueves': { inicio: '08:00', fin: '18:00' },
-                'viernes': { inicio: '08:00', fin: '18:00' },
-                'sabado': { inicio: '09:30', fin: '15:00' },
-                'domingo': null
-            }
-        };
+        // ====== CARGAR DATOS DESDE CSV (Google Sheets) ======
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQJaK0ZwEy0TyF3XSiig7-kqVFX3Xh3GV7aNUKZiAD-q5AjTheyhvAN_9QgbQvqSy1Nn6Iphs3HRpUb/pub?gid=806984964&single=true&output=csv';
 
-        const servicios = [
-            { id: 1, nombre: 'Consulta Diagnóstica', duracion: 30, precio: 20, tipo: 'publico', activo: true },
-            { id: 2, nombre: 'Limpieza Dental', duracion: 30, precio: 30, tipo: 'publico', activo: true },
-            { id: 3, nombre: 'Controles de Ortodoncia', duracion: 40, precio: 30, tipo: 'publico', activo: true },
-            { id: 4, nombre: 'Prótesis Dentales', duracion: 40, precio: null, tipo: 'consulta', activo: true },
-            { id: 5, nombre: 'Cirugía Dentales', duracion: 60, precio: null, tipo: 'consulta', activo: true },
-            { id: 6, nombre: 'Radiografía Dental', duracion: 20, precio: 10, tipo: 'publico', activo: true },
-            { id: 7, nombre: 'Blanqueamiento Dental', duracion: 60, precio: 60, tipo: 'publico', activo: true },
-            { id: 8, nombre: 'Diseños de Sonrisa', duracion: 60, precio: null, tipo: 'consulta', activo: true },
-            { id: 9, nombre: 'Estética Dental', duracion: 60, precio: null, tipo: 'consulta', activo: true },
-            { id: 10, nombre: 'Restauraciones Dentales', duracion: 45, precio: null, tipo: 'consulta', activo: true }
-        ];
+        let consultorio = {};
+        let servicios = [];
+        let doctores = [];
+        let textos = {};
 
-        const doctores = [
-            {
-                id: 1,
-                nombre: 'Dra. Ma. Alejandra Cabrera',
-                especialidad: 'Odontología Estética',
-                descripcion: 'Especialista en diseño de sonrisa y estética dental con más de 12 años de experiencia. Apasionada por transformar sonrisas y mejorar la autoestima de sus pacientes.',
-                especialidades: ['Diseño de Sonrisa', 'Estética Dental', 'Blanqueamiento'],
-                foto: '👩‍⚕️',
-                activo: true,
-                disponible: ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'],
-                citas: []
-            },
-            {
-                id: 2,
-                nombre: 'Dra. Eliana Álvarez',
-                especialidad: 'Odontología General e Infantil',
-                descripcion: 'Odontóloga general con especialidad en pacientes pediátricos. Hace que los niños se sientan cómodos y seguros en cada consulta. Excelente con toda la familia.',
-                especialidades: ['Limpieza Dental', 'Consulta Diagnóstica', 'Odontología Infantil'],
-                foto: '👩‍⚕️',
-                activo: true,
-                disponible: ['lunes', 'martes', 'miercoles', 'viernes', 'sabado'],
-                citas: []
-            },
-            {
-                id: 3,
-                nombre: 'Dra. Dorellys Gómez',
-                especialidad: 'Odontología General e Infantil',
-                descripcion: 'Profesional comprometida con la salud bucal integral. Experiencia en tratamientos preventivos y educación en higiene oral para todas las edades.',
-                especialidades: ['Limpieza Dental', 'Radiografía Dental', 'Consulta Diagnóstica'],
-                foto: '👩‍⚕️',
-                activo: true,
-                disponible: ['martes', 'miercoles', 'jueves', 'viernes', 'sabado'],
-                citas: []
+        async function cargarDatosDesdeCSV() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const lineas = csvText.split('\n').slice(1); // Saltar encabezado
+
+                lineas.forEach(linea => {
+                    if (!linea.trim()) return;
+                    
+                    // Parsear CSV (separado por comas, pero respetando comillas)
+                    const valores = [];
+                    let actual = '';
+                    let entreComillas = false;
+
+                    for (let i = 0; i < linea.length; i++) {
+                        const char = linea[i];
+                        if (char === '"') {
+                            entreComillas = !entreComillas;
+                        } else if (char === ',' && !entreComillas) {
+                            valores.push(actual.trim().replace(/^"|"$/g, ''));
+                            actual = '';
+                        } else {
+                            actual += char;
+                        }
+                    }
+                    valores.push(actual.trim().replace(/^"|"$/g, ''));
+
+                    const [seccion, campo, valor, ...resto] = valores;
+                    if (!seccion || !campo) return;
+
+                    // CONSULTORIO
+                    if (seccion === 'CONSULTORIO') {
+                        if (campo.startsWith('horario_')) {
+                            const [tipo, dia, posicion] = campo.split('_');
+                            if (!consultorio.horarios) consultorio.horarios = {};
+                            if (!consultorio.horarios[dia]) consultorio.horarios[dia] = {};
+                            consultorio.horarios[dia][posicion] = valor;
+                        } else {
+                            consultorio[campo] = valor;
+                        }
+                    }
+
+                    // SERVICIOS
+                    if (seccion === 'SERVICIOS') {
+                        const match = campo.match(/id_(\d+)_(.+)/);
+                        if (match) {
+                            const [, id, atributo] = match;
+                            const idNum = parseInt(id);
+                            if (!servicios[idNum - 1]) servicios[idNum - 1] = { id: idNum };
+                            
+                            if (atributo === 'duracion_min') {
+                                servicios[idNum - 1].duracion = parseInt(valor);
+                            } else if (atributo === 'precio') {
+                                servicios[idNum - 1].precio = valor === 'null' ? null : parseInt(valor);
+                            } else if (atributo === 'imagen_url') {
+                                servicios[idNum - 1].imagen = valor || '💊';
+                            } else {
+                                servicios[idNum - 1][atributo] = valor;
+                            }
+                        }
+                    }
+
+                    // DOCTORES
+                    if (seccion === 'DOCTORES') {
+                        const match = campo.match(/id_(\d+)_(.+)/);
+                        if (match) {
+                            const [, id, atributo] = match;
+                            const idNum = parseInt(id);
+                            if (!doctores[idNum - 1]) doctores[idNum - 1] = { id: idNum, citas: [] };
+                            
+                            if (atributo === 'especialidades') {
+                                doctores[idNum - 1][atributo] = valor.split(';').map(e => e.trim());
+                            } else if (atributo === 'foto_url') {
+                                doctores[idNum - 1].foto = valor;
+                            } else {
+                                doctores[idNum - 1][atributo] = valor;
+                            }
+                        }
+                    }
+
+                    // TEXTOS
+                    if (seccion === 'TEXTOS') {
+                        textos[campo] = valor;
+                    }
+                });
+
+                // Limpiar arrays vacíos
+                servicios = servicios.filter(Boolean);
+                doctores = doctores.filter(Boolean);
+
+                console.log('✅ Datos cargados desde CSV');
+                console.log('Servicios:', servicios.length);
+                console.log('Doctores:', doctores.length);
+
+                return true;
+            } catch (error) {
+                console.error('❌ Error cargando CSV:', error);
+                return false;
             }
-        ];
+        }
+
+        // Cargar datos antes de inicializar
+        async function iniciarApp() {
+            const cargado = await cargarDatosDesdeCSV();
+            if (cargado && servicios.length > 0 && doctores.length > 0) {
+                inicializar();
+                console.log('✅ Aplicación inicializada con datos del CSV');
+            } else {
+                console.warn('⚠️ Datos no cargados completamente, intentando inicializar con valores fallback...');
+                inicializar();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', iniciarApp);
+
+        // Servicios y doctores cargados dinámicamente desde CSV - ver función cargarDatosDesdeCSV()
 
         // ====== VARIABLES DE ESTADO ======
         let estadoBooking = {
@@ -1224,7 +1282,7 @@
         function renderizarDoctoresSeccion() {
             const grid = document.getElementById('doctoresGrid');
             grid.innerHTML = doctores
-                .filter(d => d.activo)
+                .filter(d => d && d.nombre) // Solo los que tengan nombre
                 .map(doctor => `
                     <div class="doctor-card" onclick="verPerfilDoctor(${doctor.id})">
                         <div class="doctor-image">${doctor.foto}</div>
@@ -1232,7 +1290,7 @@
                             <div class="doctor-name">${doctor.nombre}</div>
                             <div class="doctor-specialty">${doctor.especialidad}</div>
                             <div class="doctor-skills">
-                                ${doctor.especialidades.slice(0, 2).map(e => `<span class="skill-badge">${e}</span>`).join('')}
+                                ${doctor.especialidades && doctor.especialidades.slice(0, 2).map(e => `<span class="skill-badge">${e}</span>`).join('')}
                             </div>
                         </div>
                     </div>
@@ -1243,7 +1301,7 @@
         function renderizarServicios() {
             const grid = document.getElementById('serviciosGrid');
             grid.innerHTML = servicios
-                .filter(s => s.activo)
+                .filter(s => s && s.nombre) // Solo los que tengan nombre
                 .map(servicio => `
                     <div class="selection-item" onclick="seleccionarServicio(${servicio.id})">
                         <div class="selection-item-image">
@@ -1260,7 +1318,7 @@
         function renderizarDoctoresSeleccion() {
             const grid = document.getElementById('doctoresSelectGrid');
             grid.innerHTML = doctores
-                .filter(d => d.activo)
+                .filter(d => d && d.nombre) // Solo los que tengan nombre
                 .map(doctor => `
                     <div class="doctor-select-item" onclick="seleccionarDoctor(${doctor.id})">
                         <div class="doctor-select-image">${doctor.foto}</div>
