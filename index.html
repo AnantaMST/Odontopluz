@@ -1587,10 +1587,9 @@
                 return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
             };
 
-            // IMPORTANTE: Sin saltos de línea en móvil - usar espacios
-            const descripcion = `Paciente: ${nombre} | Teléfono: ${telefono} | Servicio: ${servicio.nombre} | Doctor: ${doctor.nombre}`;
+            const descripcion = `Paciente: ${nombre}\nTeléfono: ${telefono}\nServicio: ${servicio.nombre}\nDoctor: ${doctor.nombre}`;
             
-            const urlGoogleCalendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${servicio.nombre} - ${doctor.nombre}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcion)}&location=${encodeURIComponent(consultorio.ubicacion)}&ctz=America/Caracas`;
+            const urlGoogleCalendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Cita - ${servicio.nombre} - ${doctor.nombre}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcion)}&location=${encodeURIComponent(consultorio.ubicacion)}&ctz=America/Caracas`;
 
             mostrarModalConOpciones(servicio, doctor, fechaFormato, urlWhatsApp, urlGoogleCalendar, nombre);
         }
@@ -1614,9 +1613,6 @@
                         <button onclick="abrirWhatsAppYGuardar('${urlWhatsApp}')" style="display: block; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; font-size: 1rem;">
                             💬 Confirmar por WhatsApp
                         </button>
-                        <button onclick="abrirGoogleCalendarDirecto('${urlGoogleCalendar}')" style="display: block; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                            📅 Agregar a Google Calendar
-                        </button>
                         <button onclick="cerrarModal()" style="padding: 1rem; background: var(--light); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-weight: 600; cursor: pointer;">
                             ✓ Listo
                         </button>
@@ -1635,97 +1631,30 @@
 
         // ====== AGREGAR AL CALENDARIO (Silenciosamente) ======
         function agregarAlCalendario(datos) {
+            if (!consultorio.appsScriptUrl) {
+                console.log('Apps Script URL no configurada');
+                return;
+            }
+
             console.log('🔄 Intentando agregar evento al calendario...');
             console.log('Datos a enviar:', datos);
 
-            // MÉTODO 1: Generar URL para Google Calendar (funciona en TODOS los dispositivos)
-            const fechaInicio = new Date(datos.fechaInicio);
-            const fechaFin = new Date(datos.fechaFin);
-            
-            // Formato comprimido para Google Calendar
-            const formatoGoogleCalendar = (date) => {
-                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-            };
-
-            // Descripción simple (sin saltos de línea para evitar problemas en móvil)
-            const descripcionSimple = `Paciente: ${datos.paciente} | Tel: ${datos.telefono} | Servicio: ${datos.servicio} | Doctor: ${datos.doctor}`;
-            
-            // URL de Google Calendar optimizada para móvil
-            const urlGoogleCalendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${datos.servicio} - ${datos.doctor}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcionSimple)}&location=${encodeURIComponent(datos.ubicacion)}`;
-            
-            console.log('📱 URL Google Calendar (móvil): OK');
-
-            // MÉTODO 2: Intentar Apps Script como respaldo (solo en navegadores de escritorio)
-            if (!consultorio.appsScriptUrl) {
-                console.log('ℹ️ Apps Script URL no configurada, usando Google Calendar directo');
-                return;
-            }
-
-            // En móvil, usar fetch con timeout corto
-            const isMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isMovil) {
-                console.log('📱 Detectado móvil - usando Google Calendar directo');
-                // En móvil, no intentamos Apps Script
-                return;
-            }
-
-            // En escritorio, intentar Apps Script con timeout
-            console.log('💻 Detectado escritorio - intentando Apps Script...');
+            // Método simple: enviar como parámetros GET en una imagen
+            // Google Apps Script lo procesa y crea el evento
             const queryString = '?datos=' + encodeURIComponent(JSON.stringify(datos)) + '&t=' + Date.now();
             const url = consultorio.appsScriptUrl + queryString;
             
-            fetch(url, { method: 'GET', mode: 'no-cors' })
-                .then(() => console.log('✅ Apps Script respondió'))
-                .catch((err) => console.log('⚠️ Apps Script no respondió, pero está bien:', err.message));
-        }
+            console.log('URL final:', url);
 
-        // FUNCIÓN AUXILIAR: Generar URL de Google Calendar
-        function generarURLGoogleCalendar(servicio, doctor, fechaInicio, fechaFin, telefono, ubicacion) {
-            const formatoGoogleCalendar = (date) => {
-                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            // Crear una imagen invisible que dispara el GET
+            const img = new Image();
+            img.onload = function() {
+                console.log('✅ Solicitud enviada al calendario correctamente');
             };
-
-            const descripcionSimple = `Doctor: ${doctor} | Tel: ${telefono}`;
-            
-            return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${servicio} - ${doctor}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcionSimple)}&location=${encodeURIComponent(ubicacion)}`;
-        }
-
-        // ====== ABRIR GOOGLE CALENDAR (Método Simple) ======
-        function abrirGoogleCalendarDirecto(url) {
-            console.log('📅 Abriendo Google Calendar...');
-            try {
-                window.open(url, '_blank');
-            } catch (error) {
-                console.error('❌ Error abriendo Google Calendar:', error);
-                alert('No se pudo abrir Google Calendar. Intenta nuevamente.');
-            }
-        }
-
-        // ====== ABRIR GOOGLE CALENDAR (Método Alternativo - por si acaso) ======
-        function abrirGoogleCalendar(fechaStr, hora, servicio, doctor, telefono) {
-            try {
-                // Crear fecha inicio
-                const fechaInicio = new Date(fechaStr);
-                const [horas, minutos] = hora.split(':').map(Number);
-                fechaInicio.setHours(horas, minutos, 0, 0);
-
-                // Obtener duración del servicio actual
-                const servicioObj = servicios.find(s => s.nombre === servicio);
-                const duracion = servicioObj ? servicioObj.duracion : 30;
-
-                // Crear fecha fin
-                const fechaFin = new Date(fechaInicio);
-                fechaFin.setMinutes(fechaFin.getMinutes() + duracion);
-
-                // Generar URL y abrir
-                const url = generarURLGoogleCalendar(servicio, doctor, fechaInicio, fechaFin, telefono, consultorio.ubicacion);
-                console.log('📅 Abriendo Google Calendar:', url);
-                window.open(url, '_blank');
-            } catch (error) {
-                console.error('❌ Error abriendo Google Calendar:', error);
-                alert('No se pudo abrir Google Calendar. Intenta nuevamente.');
-            }
+            img.onerror = function() {
+                console.log('⚠️ Imagen no cargó, pero solicitud se envió a Apps Script');
+            };
+            img.src = url;
         }
 
         // ====== MODAL ======
