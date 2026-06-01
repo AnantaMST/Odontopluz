@@ -1587,9 +1587,10 @@
                 return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
             };
 
-            const descripcion = `Paciente: ${nombre}\nTeléfono: ${telefono}\nServicio: ${servicio.nombre}\nDoctor: ${doctor.nombre}`;
+            // IMPORTANTE: Sin saltos de línea en móvil - usar espacios
+            const descripcion = `Paciente: ${nombre} | Teléfono: ${telefono} | Servicio: ${servicio.nombre} | Doctor: ${doctor.nombre}`;
             
-            const urlGoogleCalendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Cita - ${servicio.nombre} - ${doctor.nombre}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcion)}&location=${encodeURIComponent(consultorio.ubicacion)}&ctz=America/Caracas`;
+            const urlGoogleCalendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${servicio.nombre} - ${doctor.nombre}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcion)}&location=${encodeURIComponent(consultorio.ubicacion)}&ctz=America/Caracas`;
 
             mostrarModalConOpciones(servicio, doctor, fechaFormato, urlWhatsApp, urlGoogleCalendar, nombre);
         }
@@ -1613,7 +1614,7 @@
                         <button onclick="abrirWhatsAppYGuardar('${urlWhatsApp}')" style="display: block; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; font-size: 1rem;">
                             💬 Confirmar por WhatsApp
                         </button>
-                        <button onclick="abrirGoogleCalendar('${estadoBooking.fechaSeleccionada}', '${estadoBooking.horaSeleccionada}', '${servicio.nombre}', '${doctor.nombre}', '${telefono}')" style="display: block; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                        <button onclick="abrirGoogleCalendarDirecto('${urlGoogleCalendar}')" style="display: block; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; font-size: 1rem;">
                             📅 Agregar a Google Calendar
                         </button>
                         <button onclick="cerrarModal()" style="padding: 1rem; background: var(--light); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-weight: 600; cursor: pointer;">
@@ -1690,7 +1691,18 @@
             return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${servicio} - ${doctor}`)}&dates=${formatoGoogleCalendar(fechaInicio)}/${formatoGoogleCalendar(fechaFin)}&details=${encodeURIComponent(descripcionSimple)}&location=${encodeURIComponent(ubicacion)}`;
         }
 
-        // ====== ABRIR GOOGLE CALENDAR ======
+        // ====== ABRIR GOOGLE CALENDAR (Método Simple) ======
+        function abrirGoogleCalendarDirecto(url) {
+            console.log('📅 Abriendo Google Calendar...');
+            try {
+                window.open(url, '_blank');
+            } catch (error) {
+                console.error('❌ Error abriendo Google Calendar:', error);
+                alert('No se pudo abrir Google Calendar. Intenta nuevamente.');
+            }
+        }
+
+        // ====== ABRIR GOOGLE CALENDAR (Método Alternativo - por si acaso) ======
         function abrirGoogleCalendar(fechaStr, hora, servicio, doctor, telefono) {
             try {
                 // Crear fecha inicio
@@ -1712,7 +1724,7 @@
                 window.open(url, '_blank');
             } catch (error) {
                 console.error('❌ Error abriendo Google Calendar:', error);
-                mostrarModal('⚠️', 'Error', 'No se pudo abrir Google Calendar. Intenta nuevamente.');
+                alert('No se pudo abrir Google Calendar. Intenta nuevamente.');
             }
         }
 
