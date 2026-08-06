@@ -441,10 +441,6 @@
       <a href="#nosotros">Por qué elegirnos</a>
       <a href="#faq">Preguntas frecuentes</a>
     </div>
-    <div class="nav-cta">
-      <a class="btn btn-ghost" href="#" onclick="return false;" style="pointer-events:none;opacity:0;width:0;padding:0;overflow:hidden;">.</a>
-      <a class="btn btn-primary" id="wa-nav" href="#" target="_blank" rel="noopener">Agenda tu valoración</a>
-    </div>
     <div class="burger" id="burger"><span></span><span></span><span></span></div>
   </nav>
 </header>
@@ -557,9 +553,8 @@
 
   <!-- CTA FINAL -->
   <section class="final-cta">
-    <div class="final-photo">
+    <div class="final-photo" style="background-image:url('https://i.imgur.com/K5mvJTt.png');background-size:cover;background-position:center;">
       <div class="final-overlay">
-        <p class="eyebrow" style="color:#8fb0ff;margin-bottom:14px;">Espacio para foto real de la doctora — 1200 × 560 px</p>
         <h2>Tu nueva sonrisa comienza hoy.</h2>
         <a class="btn btn-primary wa-link" href="#" target="_blank" rel="noopener" data-msg="Hola, quiero agendar mi valoración en Odontopluz.">Agenda tu valoración</a>
       </div>
@@ -621,7 +616,6 @@ function waUrl(msg){
 document.querySelectorAll(".wa-link").forEach(el=>{
   el.href = waUrl(el.dataset.msg || "Hola, quisiera más información sobre Odontopluz.");
 });
-document.getElementById("wa-nav").href = waUrl("Hola, me gustaría agendar una valoración en Odontopluz.");
 
 /* ================= Before / After sliders ================= */
 document.querySelectorAll("[data-ba]").forEach(ba=>{
