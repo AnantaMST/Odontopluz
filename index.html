@@ -1,1066 +1,786 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OdontoPluz - Sistema de Agendamiento</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odontopluz — Tu sonrisa, nuestra prioridad</title>
+<meta name="description" content="Odontopluz — Clínica odontológica en Ciudad Bolívar, Venezuela. Rehabilitación oral, carillas, implantes, ortodoncia y odontología estética con atención personalizada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0A1B33;
+    --navy-2:#122a4d;
+    --blue:#1E52C9;
+    --blue-light:#3E6FE0;
+    --white:#FFFFFF;
+    --off:#F5F7FA;
+    --gray:#E3E7EE;
+    --muted:#5C6577;
+    --ink:#0E1420;
+    --radius:14px;
+    --wa:584121216631;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:var(--white);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Instrument Sans',sans-serif;
+    font-weight:600;
+    letter-spacing:-0.02em;
+    color:var(--navy);
+  }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+  .container{max-width:1180px;margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--blue);
+  }
+  section{padding:56px 0;}
+  @media (max-width:768px){ section{padding:40px 0;} }
 
-        :root {
-            --primary: #0d3b66;
-            --primary-light: #1a5490;
-            --secondary: #6b7280;
-            --light: #f3f4f6;
-            --white: #ffffff;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --text: #1f2937;
-            --border: #e5e7eb;
-            --radius: 12px;
-        }
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:15px 28px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:15px;
+    transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:var(--blue);
+    color:#fff;
+    box-shadow:0 8px 24px -8px rgba(30,82,201,0.55);
+  }
+  .btn-primary:hover{background:var(--blue-light);transform:translateY(-2px);box-shadow:0 12px 28px -8px rgba(30,82,201,.6);}
+  .btn-ghost{
+    background:transparent;
+    color:var(--navy);
+    border:1.5px solid var(--gray);
+  }
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+  .btn-light{
+    background:#fff;color:var(--navy);
+  }
+  .btn-light:hover{background:var(--off);transform:translateY(-2px);}
+  .btn svg{width:18px;height:18px;flex-shrink:0;}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text);
-            background-color: var(--light);
-            line-height: 1.6;
-        }
+  /* ---------- Header ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(255,255,255,.82);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(14,20,32,0.06);
+    transition:background .3s ease;
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 24px;
+    max-width:1180px;margin:0 auto;
+  }
+  .logo{
+    font-family:'Instrument Sans',sans-serif;
+    font-weight:700;font-size:20px;letter-spacing:-0.01em;
+    color:var(--navy);
+    display:flex;align-items:baseline;gap:8px;
+  }
+  .logo span{color:var(--blue);}
+  .nav-links{display:flex;align-items:center;gap:36px;}
+  .nav-links a{
+    font-size:14.5px;font-weight:500;color:var(--muted);
+    transition:color .2s;
+    position:relative;
+  }
+  .nav-links a:hover{color:var(--navy);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+  .burger{display:none;width:24px;height:18px;position:relative;flex-direction:column;justify-content:space-between;}
+  .burger span{display:block;height:2px;width:100%;background:var(--navy);border-radius:2px;}
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .burger{display:flex;}
+    .nav-cta .btn-ghost{display:none;}
+  }
 
-        /* HEADER SIMPLIFICADO */
-        header {
-            background: var(--white);
-            padding: 0;
-        }
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    margin-top:0;
+    padding-top:0;
+  }
+  .hero-image{
+    width:100%;
+    aspect-ratio:1200/600;
+    max-height:640px;
+    overflow:hidden;
+    background:var(--navy);
+    margin-top:76px;
+  }
+  .hero-image img{
+    width:100%;height:100%;object-fit:cover;display:block;
+  }
+  .hero-content{
+    max-width:1180px;margin:0 auto;
+    padding:44px 24px 8px;
+  }
+  .hero-content h1{
+    color:var(--navy);
+    font-size:clamp(28px, 4.4vw, 46px);
+    line-height:1.1;
+    max-width:680px;
+    margin-bottom:16px;
+  }
+  .hero-content p{
+    color:var(--muted);
+    font-size:16.5px;
+    max-width:560px;
+    margin-bottom:26px;
+  }
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
 
-        .header-banner {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-            text-align: center;
-            padding: 1rem;
-            min-height: 150px;
-        }
+  /* ---------- Section headers ---------- */
+  .sec-head{max-width:620px;margin-bottom:38px;}
+  .sec-head h2{font-size:clamp(26px,3.4vw,38px);margin-top:10px;}
+  .sec-head p{color:var(--muted);font-size:16px;margin-top:14px;}
+  .sec-head.center{margin-left:auto;margin-right:auto;text-align:center;}
 
-        .header-banner img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: cover;
-        }
+  /* ---------- Casos reales / before-after ---------- */
+  .cases{background:var(--off);}
+  .ba-wrap{
+    display:grid;grid-template-columns:1fr 1fr;gap:28px;
+  }
+  @media (max-width:768px){ .ba-wrap{grid-template-columns:1fr;} }
+  .ba-wrap.single{grid-template-columns:1fr;max-width:560px;margin:0 auto;}
+  .ba-card{
+    background:#0A1B33;
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .ba{
+    position:relative;
+    aspect-ratio:4/3;
+    overflow:hidden;
+    cursor:ew-resize;
+    user-select:none;
+    background:linear-gradient(135deg,#0E2549,#1E52C9);
+  }
+  .ba-before,.ba-after{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.5);
+    font-family:'Inter',sans-serif;font-size:12.5px;
+    letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  }
+  .ba-before{background:linear-gradient(135deg,#132c52,#1E52C9);}
+  .ba-after{background:linear-gradient(135deg,#0A1B33,#2f5ec9);
+    clip-path:inset(0 0 0 50%);
+  }
+  .ba-handle{
+    position:absolute;top:0;bottom:0;left:50%;
+    width:2px;background:#fff;
+    transform:translateX(-50%);
+    box-shadow:0 0 0 1px rgba(0,0,0,.1);
+  }
+  .ba-handle::after{
+    content:'';
+    position:absolute;top:50%;left:50%;
+    width:44px;height:44px;
+    transform:translate(-50%,-50%);
+    background:#fff;border-radius:50%;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%230A1B33' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='8 7 3 12 8 17'%3E%3C/polyline%3E%3Cpolyline points='16 7 21 12 16 17'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:center;
+  }
+  .ba-label{
+    position:absolute;top:14px;
+    font-size:11px;font-weight:700;letter-spacing:.08em;
+    color:#fff;background:rgba(0,0,0,.35);
+    padding:5px 11px;border-radius:999px;
+    pointer-events:none;
+  }
+  .ba-label.left{left:14px;}
+  .ba-label.right{right:14px;}
+  .ba-caption{padding:20px 22px;color:rgba(255,255,255,.7);font-size:14px;}
+  .ba-caption strong{color:#fff;display:block;font-size:15px;margin-bottom:4px;font-weight:600;}
 
-        .header-logo-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 1rem;
-            background: var(--white);
-            border-bottom: 3px solid var(--primary);
-            position: relative;
-        }
+  /* ---------- Tratamientos ---------- */
+  .treat-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  }
+  @media (max-width:920px){ .treat-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .treat-grid{grid-template-columns:1fr;} }
+  .treat-card{
+    border:1px solid var(--gray);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    transition:border-color .25s, transform .25s, box-shadow .25s;
+  }
+  .treat-card:hover{
+    border-color:transparent;
+    box-shadow:0 20px 40px -20px rgba(10,27,51,.18);
+    transform:translateY(-4px);
+  }
+  .treat-icon{
+    width:44px;height:44px;
+    border-radius:12px;
+    background:var(--off);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:20px;
+  }
+  .treat-icon svg{width:22px;height:22px;stroke:var(--blue);}
+  .treat-card h3{font-size:18px;margin-bottom:10px;font-weight:600;}
+  .treat-card p{color:var(--muted);font-size:14.5px;margin-bottom:18px;}
+  .treat-link{
+    font-size:13.5px;font-weight:600;color:var(--blue);
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .treat-link svg{width:14px;height:14px;transition:transform .2s;}
+  .treat-link:hover svg{transform:translateX(3px);}
 
-        .logo-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: white;
-            margin-bottom: 0.8rem;
-            box-shadow: 0 4px 12px rgba(13, 59, 102, 0.2);
-            overflow: hidden;
-            position: relative;
-            margin-top: -50px;
-        }
+  /* ---------- Por qué elegirnos ---------- */
+  .why{background:var(--navy);}
+  .why .sec-head h2, .why .eyebrow{color:#fff;}
+  .why .sec-head p{color:rgba(255,255,255,.6);}
+  .why-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:rgba(255,255,255,.08);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  @media (max-width:768px){ .why-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:480px){ .why-grid{grid-template-columns:1fr;} }
+  .why-item{
+    background:var(--navy);
+    padding:34px 28px;
+  }
+  .why-item svg{width:24px;height:24px;stroke:#fff;margin-bottom:16px;}
+  .why-item h4{color:#fff;font-family:'Instrument Sans',sans-serif;font-size:16.5px;font-weight:600;margin-bottom:8px;}
+  .why-item p{color:rgba(255,255,255,.55);font-size:13.5px;}
 
-        .logo-circle img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+  /* ---------- Testimonios ---------- */
+  .testi-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  }
+  @media (max-width:920px){ .testi-grid{grid-template-columns:1fr;} }
+  .testi-card{
+    background:var(--off);
+    border-radius:var(--radius);
+    padding:30px;
+  }
+  .stars{display:flex;gap:3px;margin-bottom:16px;}
+  .stars svg{width:15px;height:15px;fill:var(--blue);stroke:none;}
+  .testi-card p{font-size:15px;color:var(--ink);margin-bottom:22px;}
+  .testi-who{display:flex;align-items:center;gap:12px;}
+  .testi-avatar{
+    width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,#1E52C9,#0A1B33);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:600;font-size:14px;
+  }
+  .testi-who span{font-size:14px;font-weight:600;color:var(--navy);display:block;}
+  .testi-who small{font-size:12.5px;color:var(--muted);}
 
-        .business-name {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: -1px;
-        }
+  /* ---------- Galería ---------- */
+  .gallery{background:var(--off);}
+  .gal-scroller{
+    display:flex;
+    gap:16px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding-bottom:8px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .gal-scroller::-webkit-scrollbar{display:none;}
+  .gal-item{
+    flex:0 0 auto;
+    width:250px;
+    aspect-ratio:3/4;
+    scroll-snap-align:start;
+    border-radius:12px;
+    overflow:hidden;
+    background:linear-gradient(160deg,#132c52,#1E52C9);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.55);
+    font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
+    text-align:center;padding:16px;
+  }
+  @media (max-width:600px){ .gal-item{width:70vw;} }
+  .gal-item span{opacity:.7;}
+  .gal-nav{
+    display:flex;gap:10px;justify-content:flex-end;margin-top:22px;
+  }
+  .gal-nav button{
+    width:44px;height:44px;border-radius:50%;
+    border:1.5px solid var(--gray);
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s, background .2s;
+  }
+  .gal-nav button:hover{border-color:var(--blue);background:#fff;}
+  .gal-nav svg{width:18px;height:18px;stroke:var(--navy);}
 
-        /* MAIN CONTAINER - MOBILE */
-        .container {
-            padding: 0.8rem;
-            max-width: 100%;
-        }
+  /* ---------- FAQ ---------- */
+  .faq-list{max-width:760px;}
+  .faq-item{
+    border-bottom:1px solid var(--gray);
+  }
+  .faq-q{
+    width:100%;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:24px 4px;
+    text-align:left;
+    font-family:'Instrument Sans',sans-serif;
+    font-size:16.5px;font-weight:600;color:var(--navy);
+  }
+  .faq-q .plus{
+    width:22px;height:22px;flex-shrink:0;position:relative;margin-left:20px;
+  }
+  .faq-q .plus::before,.faq-q .plus::after{
+    content:'';position:absolute;background:var(--blue);
+    top:50%;left:50%;transform:translate(-50%,-50%);
+  }
+  .faq-q .plus::before{width:14px;height:2px;}
+  .faq-q .plus::after{width:2px;height:14px;transition:transform .3s ease;}
+  .faq-item.open .plus::after{transform:translate(-50%,-50%) rotate(90deg);}
+  .faq-a{
+    max-height:0;overflow:hidden;
+    transition:max-height .35s ease;
+  }
+  .faq-a p{padding:0 4px 24px;color:var(--muted);font-size:15px;max-width:640px;}
 
-        /* HERO */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: var(--white);
-            padding: 1.2rem;
-            border-radius: var(--radius);
-            margin-bottom: 1.2rem;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(13, 59, 102, 0.15);
-        }
+  /* ---------- CTA final ---------- */
+  .final-cta{position:relative;}
+  .final-photo{
+    aspect-ratio:1200/560;
+    max-height:520px;
+    background:linear-gradient(135deg,#0A1B33 0%,#173B6B 55%,#1E52C9 130%);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.45);
+    text-align:center;
+  }
+  .final-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(0deg, rgba(6,13,26,.82) 0%, rgba(6,13,26,.2) 55%, rgba(6,13,26,.55) 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:24px;
+  }
+  .final-overlay h2{color:#fff;font-size:clamp(26px,4vw,42px);margin-bottom:22px;max-width:600px;}
 
-        .hero h1 {
-            font-size: 1.2rem;
-            margin-bottom: 0.6rem;
-            font-weight: 700;
-        }
+  /* ---------- Footer ---------- */
+  footer{background:var(--navy);color:rgba(255,255,255,.6);padding:70px 0 30px;}
+  .foot-grid{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;
+    padding-bottom:50px;border-bottom:1px solid rgba(255,255,255,.1);
+  }
+  @media (max-width:768px){ .foot-grid{grid-template-columns:1fr 1fr;} }
+  .foot-logo{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:20px;color:#fff;margin-bottom:14px;}
+  .foot-logo span{color:var(--blue-light);}
+  .foot-grid h5{color:#fff;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;font-weight:600;}
+  .foot-grid li{margin-bottom:10px;font-size:14px;}
+  .foot-grid a:hover{color:#fff;}
+  .foot-map{
+    grid-column:1/-1;
+    margin-top:10px;
+    height:220px;
+    border-radius:12px;
+    border:1.5px dashed rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;color:rgba(255,255,255,.4);
+  }
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:26px;font-size:13px;flex-wrap:wrap;gap:12px;
+  }
 
-        .hero p {
-            font-size: 0.85rem;
-            opacity: 0.95;
-        }
+  /* ---------- WhatsApp floating button ---------- */
+  .wa-float{
+    position:fixed;bottom:26px;right:26px;z-index:90;
+    width:60px;height:60px;border-radius:50%;
+    background:var(--blue);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px -6px rgba(30,82,201,.6);
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  .wa-float svg{width:28px;height:28px;fill:#fff;}
+  @keyframes pulse{
+    0%,100%{box-shadow:0 10px 30px -6px rgba(30,82,201,.6);}
+    50%{box-shadow:0 10px 30px -6px rgba(30,82,201,.9), 0 0 0 8px rgba(30,82,201,.12);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .wa-float{animation:none;}
+    html{scroll-behavior:auto;}
+    *{transition-duration:.01ms !important;}
+  }
 
-        /* SECCIÓN DE DOCTORES - CARRUSEL */
-        .doctores-section {
-            margin-bottom: 1rem;
-        }
-
-        .doctores-section h2 {
-            color: var(--primary);
-            margin-bottom: 0.8rem;
-            font-size: 1.1rem;
-        }
-
-        .doctores-carrusel {
-            display: flex;
-            overflow-x: auto;
-            gap: 0.8rem;
-            scroll-snap-type: x mandatory;
-            padding-bottom: 0.5rem;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .doctores-carrusel::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .doctores-carrusel::-webkit-scrollbar-track {
-            background: var(--light);
-            border-radius: 10px;
-        }
-
-        .doctores-carrusel::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        .doctor-card {
-            background: var(--white);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            min-width: 200px;
-            flex-shrink: 0;
-            scroll-snap-align: start;
-        }
-
-        .doctor-card:active {
-            transform: scale(0.98);
-            box-shadow: 0 4px 12px rgba(13, 59, 102, 0.15);
-        }
-
-        .doctor-image {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.5rem;
-            color: rgba(255,255,255,0.3);
-            overflow: hidden;
-        }
-
-        .doctor-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .doctor-info {
-            padding: 1rem;
-        }
-
-        .doctor-name {
-            color: var(--primary);
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-            line-height: 1.2;
-        }
-
-        .doctor-specialty {
-            color: var(--primary-light);
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 0.8rem;
-        }
-
-        .doctor-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.8rem;
-            color: var(--secondary);
-        }
-
-        /* SECCIÓN CARACTERÍSTICAS */
-        .caracteristicas-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .caracteristicas-section h2 {
-            color: var(--primary);
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .caracteristicas-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .caracteristica-item {
-            background: var(--white);
-            padding: 1rem;
-            border-radius: var(--radius);
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .caracteristica-emoji {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .caracteristica-titulo {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .caracteristica-desc {
-            color: var(--secondary);
-            font-size: 0.8rem;
-        }
-
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-icon {
-            font-size: 3rem;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        /* FORM */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: var(--white);
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        /* PASOS */
-        .pasos-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .paso {
-            background: var(--light);
-            padding: 0.8rem;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--secondary);
-        }
-
-        .paso.activo {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        /* SERVICIOS */
-        .servicios-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .servicio-card {
-            background: var(--white);
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .servicio-card.selected {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: var(--white);
-            border-color: var(--primary);
-        }
-
-        .servicio-emoji {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .servicio-nombre {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .servicio-duracion {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-
-        /* FOOTER */
-        footer {
-            background: var(--primary);
-            color: var(--white);
-            padding: 1.5rem;
-            text-align: center;
-            margin-top: 2rem;
-            border-top: 3px solid var(--primary-light);
-        }
-
-        footer p {
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        /* LOADER */
-        .loader {
-            text-align: center;
-            padding: 2rem;
-            color: var(--primary);
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--light);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  :focus-visible{outline:2.5px solid var(--blue);outline-offset:3px;}
+</style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-banner" id="headerBanner">
-            <img src="https://via.placeholder.com/1200x600" alt="Banner">
+
+<header>
+  <nav class="nav">
+    <a href="#top" class="logo">ODONTO<span>PLUZ</span></a>
+    <div class="nav-links">
+      <a href="#tratamientos">Tratamientos</a>
+      <a href="#casos">Casos reales</a>
+      <a href="#nosotros">Por qué elegirnos</a>
+      <a href="#faq">Preguntas frecuentes</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="#" onclick="return false;" style="pointer-events:none;opacity:0;width:0;padding:0;overflow:hidden;">.</a>
+      <a class="btn btn-primary" id="wa-nav" href="#" target="_blank" rel="noopener">Agenda tu valoración</a>
+    </div>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO / IMAGEN PRINCIPAL -->
+  <section class="hero">
+    <div class="hero-image">
+      <img src="https://i.imgur.com/K5mvJTt.png" alt="Odontopluz — Clínica odontológica">
+    </div>
+    <div class="hero-content">
+      <p class="eyebrow">Odontología integral en Ciudad Bolívar</p>
+      <h1>Recupera la sonrisa que siempre has querido.</h1>
+      <p>En Odontopluz transformamos sonrisas mediante tratamientos personalizados, tecnología moderna y una atención que pone tu bienestar en primer lugar.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary wa-link" href="#" target="_blank" rel="noopener" data-msg="Hola, me gustaría agendar una valoración en Odontopluz.">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.29-1.39a9.9 9.9 0 0 0 4.7 1.2h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.24 0 4.35.87 5.94 2.46a8.23 8.23 0 0 1 2.42 5.85c0 4.56-3.72 8.28-8.35 8.28a8.3 8.3 0 0 1-4.22-1.15l-.3-.18-3.14.82.84-3.06-.2-.32a8.2 8.2 0 0 1-1.26-4.38c0-4.56 3.72-8.32 8.27-8.32M8.53 6.87c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.35.99 2.51c.12.16 1.7 2.72 4.2 3.7 2.08.82 2.5.66 2.95.62.45-.04 1.46-.6 1.66-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.46-.28-.24-.12-1.46-.72-1.68-.8-.23-.08-.4-.12-.56.12-.16.24-.64.8-.79.97-.14.16-.29.18-.53.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.5.11-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.56-1.36-.78-1.85-.2-.48-.4-.42-.56-.43-.14-.01-.3-.01-.46-.01Z"/></svg>
+          Agenda tu valoración
+        </a>
+        <a class="btn btn-ghost" href="#tratamientos">Ver tratamientos</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASOS REALES -->
+  <section id="casos" class="cases">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">Resultados reales</p>
+        <h2>Casos reales, sin filtros.</h2>
+        <p>Desliza el control para comparar el antes y el después de nuestros pacientes. Cada caso es un tratamiento distinto, diseñado a la medida.</p>
+      </div>
+      <div class="ba-wrap single">
+        <div class="ba-card">
+          <div class="ba" data-ba>
+            <div class="ba-before" style="background-image:url('https://i.imgur.com/2kKKVzr.png');background-size:cover;background-position:center;"></div>
+            <div class="ba-after"><span>Después — falta foto (envíame el enlace)</span></div>
+            <div class="ba-label left">Antes</div>
+            <div class="ba-label right">Después</div>
+            <div class="ba-handle"></div>
+          </div>
+          <div class="ba-caption"><strong>Rehabilitación oral con prótesis sobre implantes</strong>Recuperación de función masticatoria y estética facial.</div>
         </div>
-        <div class="header-logo-section">
-            <div class="logo-circle" id="logoCircle">🦷</div>
-            <h1 class="business-name" id="businessName">OdontoPluz</h1>
-        </div>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main class="container">
-        <!-- HERO -->
-        <div class="hero">
-            <h1 id="heroTitle">Agendar tu Cita</h1>
-            <p id="heroSubtitle">Consulta con nuestros especialistas</p>
-        </div>
-
-        <!-- DOCTORES PREVIEW -->
-        <div class="doctores-section">
-            <h2>Nuestros Especialistas</h2>
-            <div class="doctores-carrusel" id="doctoresPreview"></div>
-        </div>
-
-        <!-- CARACTERÍSTICAS -->
-        <div class="caracteristicas-section">
-            <h2 id="caracteristicasTitle">¿Por qué elegir OdontoPluz?</h2>
-            <div class="caracteristicas-grid" id="caracteristicasGrid"></div>
-        </div>
-
-        <!-- BOOKING WIZARD -->
-        <div id="bookingSection" style="display: none; margin-top: 2rem;">
-            <div class="pasos-container" id="stepsContainer"></div>
-            
-            <!-- PASO 1: SERVICIOS -->
-            <div id="paso1" style="display: none;">
-                <h2>Selecciona el Servicio</h2>
-                <div class="servicios-grid" id="serviciosGrid"></div>
-                <button class="btn-primary" onclick="irAlPaso(2)" style="width: 100%;">Continuar</button>
-            </div>
-
-            <!-- PASO 2: DOCTOR -->
-            <div id="paso2" style="display: none;">
-                <h2>Selecciona el Doctor</h2>
-                <div class="servicios-grid" id="doctoresSeleccionGrid"></div>
-                <button class="btn-primary" onclick="irAlPaso(3)" style="width: 100%;">Continuar</button>
-            </div>
-
-            <!-- PASO 3: FECHA -->
-            <div id="paso3" style="display: none;">
-                <h2>Selecciona Fecha</h2>
-                <div class="form-group">
-                    <input type="date" id="datePicker">
-                </div>
-                <button class="btn-primary" onclick="irAlPaso(4)" style="width: 100%;">Continuar</button>
-            </div>
-
-            <!-- PASO 4: HORA -->
-            <div id="paso4" style="display: none;">
-                <h2>Selecciona Hora</h2>
-                <div class="servicios-grid" id="horariosGrid"></div>
-                <button class="btn-primary" onclick="irAlPaso(5)" style="width: 100%;">Continuar</button>
-            </div>
-
-            <!-- PASO 5: DATOS -->
-            <div id="paso5" style="display: none;">
-                <h2>Completa tus Datos</h2>
-                <form onsubmit="confirmarCita(event)">
-                    <div class="form-group">
-                        <label>Nombre Completo *</label>
-                        <input type="text" id="nombre" placeholder="Tu nombre completo" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="email" placeholder="tu@email.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Teléfono *</label>
-                        <input type="tel" id="telefono" placeholder="+584121234567" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Comentario</label>
-                        <textarea id="asunto" placeholder="¿Tienes alguna pregunta o comentario?"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;">✓ Confirmar Cita</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- BOTÓN PARA INICIAR BOOKING (visible al inicio) -->
-        <div id="initialButton" style="text-align: center; margin: 2rem 0;">
-            <button class="btn-primary" onclick="iniciarBooking()" style="width: 100%; padding: 1.2rem; font-size: 1.1rem;">
-                📅 Agendar Cita
-            </button>
-        </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer>
-        <p id="footerCopyright">© 2024 OdontoPluz. Todos los derechos reservados.</p>
-        <div class="social-links">
-            <a id="instagramLink" href="#">Instagram</a>
-            <a id="facebookLink" href="#">Facebook</a>
-            <a id="tiktokLink" href="#" style="display: none;">TikTok</a>
-        </div>
-    </footer>
-
-    <!-- MODAL -->
-    <div class="modal" id="modal"></div>
-
-    <script>
-        // ====== CONFIGURACIÓN CSV ======
-        // Cambiar esta URL a tu Google Sheets o CSV local
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQJaK0ZwEy0TyF3XSiig7-kqVFX3Xh3GV7aNUKZiAD-q5AjTheyhvAN_9QgbQvqSy1Nn6Iphs3HRpUb/pub?output=csv';
-
-        // Variables globales
-        let config = {};
-        let servicios = [];
-        let doctores = [];
-        let caracteristicas = [];
-        let textos = {};
-
-        let estadoBooking = {
-            pasoActual: 1,
-            servicioSeleccionado: null,
-            doctorSeleccionado: null,
-            fechaSeleccionada: null,
-            horaSeleccionada: null,
-            nombre: '',
-            email: '',
-            telefono: '',
-            asunto: ''
-        };
-
-        // ====== CARGAR CSV ======
-        async function cargarCSV() {
-            try {
-                console.log('Cargando CSV desde:', CSV_URL);
-                const response = await fetch(CSV_URL);
-                const csvText = await response.text();
-                parsearCSV(csvText);
-                inicializarPagina();
-            } catch (error) {
-                console.error('Error cargando CSV:', error);
-                mostrarError('No se pudo cargar la configuración. Intenta más tarde.');
-            }
-        }
-
-        // ====== PARSEAR CSV ======
-        function parsearCSV(csvText) {
-            const lineas = csvText.split('\n').filter(l => l.trim());
-            const encabezados = lineas[0].split(',').map(h => h.trim());
-            
-            // Índices de columnas
-            const idxSeccion = encabezados.indexOf('SECCION');
-            const idxCampo = encabezados.indexOf('CAMPO');
-            const idxValor = encabezados.indexOf('VALOR');
-
-            // Procesar cada línea
-            for (let i = 1; i < lineas.length; i++) {
-                // Parse CSV respetando comillas
-                const valores = parseCSVLine(lineas[i]);
-                if (valores.length < 3) continue;
-
-                const seccion = valores[0].trim();
-                const campo = valores[1].trim();
-                let valor = valores[2].trim();
-
-                // Procesar según sección
-                if (seccion === 'CONSULTORIO') {
-                    config[campo] = valor;
-                } else if (seccion === 'HEADER') {
-                    config[campo] = valor;
-                } else if (seccion === 'TEXTOS') {
-                    textos[campo] = valor;
-                } else if (seccion === 'SERVICIOS') {
-                    procesarServicio(campo, valor);
-                } else if (seccion === 'DOCTORES') {
-                    procesarDoctor(campo, valor);
-                } else if (seccion === 'CARACTERISTICAS') {
-                    procesarCaracteristica(campo, valor);
-                } else if (seccion === 'GOOGLE_CALENDAR') {
-                    config[campo] = valor;
-                } else if (seccion === 'REDES_SOCIALES') {
-                    config['social_' + campo] = valor;
-                } else if (seccion === 'FOOTER') {
-                    config[campo] = valor;
-                }
-            }
-
-            console.log('Config:', config);
-            console.log('Servicios:', servicios);
-            console.log('Doctores:', doctores);
-        }
-
-        // ====== PARSER CSV (respeta comillas) ======
-        function parseCSVLine(line) {
-            const resultado = [];
-            let current = '';
-            let insideQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    insideQuotes = !insideQuotes;
-                } else if (char === ',' && !insideQuotes) {
-                    resultado.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            resultado.push(current);
-            return resultado;
-        }
-
-        // ====== PROCESAR SERVICIOS ======
-        function procesarServicio(campo, valor) {
-            const match = campo.match(/id_(\d+)_(.*)/);
-            if (!match) return;
-
-            const id = match[1];
-            const propiedad = match[2];
-
-            if (!servicios[id - 1]) {
-                servicios[id - 1] = { id: id };
-            }
-
-            if (propiedad === 'nombre') {
-                servicios[id - 1].nombre = valor;
-            } else if (propiedad === 'duracion_min') {
-                servicios[id - 1].duracion = parseInt(valor) || 30;
-            } else if (propiedad === 'precio') {
-                servicios[id - 1].precio = valor === 'null' ? null : parseFloat(valor);
-            } else if (propiedad === 'imagen_url') {
-                servicios[id - 1].emoji = valor || '🦷';
-            }
-        }
-
-        // ====== PROCESAR DOCTORES ======
-        function procesarDoctor(campo, valor) {
-            const match = campo.match(/id_(\d+)_(.*)/);
-            if (!match) return;
-
-            const id = match[1];
-            const propiedad = match[2];
-
-            if (!doctores[id - 1]) {
-                doctores[id - 1] = { id: id, citas: [], especialidades: [] };
-            }
-
-            if (propiedad === 'nombre') {
-                doctores[id - 1].nombre = valor;
-            } else if (propiedad === 'especialidad') {
-                doctores[id - 1].especialidad = valor;
-            } else if (propiedad === 'descripcion') {
-                doctores[id - 1].descripcion = valor;
-            } else if (propiedad === 'especialidades') {
-                doctores[id - 1].especialidades = valor.split(';').map(e => e.trim());
-            } else if (propiedad === 'foto_url') {
-                doctores[id - 1].foto = valor || '👩‍⚕️';
-            }
-        }
-
-        // ====== PROCESAR CARACTERÍSTICAS ======
-        function procesarCaracteristica(campo, valor) {
-            const match = campo.match(/id_(\d+)_(.*)/);
-            if (match) {
-                const id = match[1];
-                const propiedad = match[2];
-
-                if (!caracteristicas[id - 1]) {
-                    caracteristicas[id - 1] = { id: id };
-                }
-
-                if (propiedad === 'emoji') {
-                    caracteristicas[id - 1].emoji = valor;
-                } else if (propiedad === 'titulo') {
-                    caracteristicas[id - 1].titulo = valor;
-                } else if (propiedad === 'descripcion') {
-                    caracteristicas[id - 1].descripcion = valor;
-                }
-            } else if (campo === 'titulo_seccion') {
-                config.caracteristicas_titulo = valor;
-            }
-        }
-
-        // ====== INICIALIZAR PÁGINA ======
-        function inicializarPagina() {
-            // Actualizar tema de colores
-            if (config.color_primario) {
-                document.documentElement.style.setProperty('--primary', config.color_primario);
-            }
-            if (config.color_secundario) {
-                document.documentElement.style.setProperty('--secondary', config.color_secundario);
-            }
-
-            // Actualizar header
-            document.title = config.nombre || 'OdontoPluz';
-            document.getElementById('businessName').textContent = config.nombre || 'OdontoPluz';
-            document.getElementById('logoCircle').textContent = config.logo_emoji || '🦷';
-            document.getElementById('heroTitle').textContent = config.titulo_principal || 'Agendar tu Cita';
-            document.getElementById('heroSubtitle').textContent = config.subtitulo || 'Consulta con nuestros especialistas';
-
-            if (config.banner_url) {
-                document.getElementById('headerBanner').innerHTML = `<img src="${config.banner_url}" alt="Banner">`;
-            }
-
-            // Actualizar footer
-            document.getElementById('footerCopyright').textContent = config.texto_copyright || '© 2024 OdontoPluz';
-            
-            if (config.social_instagram) {
-                document.getElementById('instagramLink').textContent = config.social_instagram;
-                document.getElementById('instagramLink').href = `https://instagram.com/${config.social_instagram.replace('@', '')}`;
-            }
-            
-            if (config.social_facebook) {
-                document.getElementById('facebookLink').textContent = config.social_facebook;
-                document.getElementById('facebookLink').href = `https://facebook.com/${config.social_facebook}`;
-            }
-
-            if (config.social_tiktok) {
-                document.getElementById('tiktokLink').style.display = 'inline';
-                document.getElementById('tiktokLink').textContent = config.social_tiktok;
-                document.getElementById('tiktokLink').href = `https://tiktok.com/@${config.social_tiktok.replace('@', '')}`;
-            }
-
-            // Renderizar doctores preview
-            renderizarDoctoresPreview();
-
-            // Renderizar características
-            renderizarCaracteristicas();
-        }
-
-        // ====== RENDERIZAR DOCTORES PREVIEW ======
-        function renderizarDoctoresPreview() {
-            const container = document.getElementById('doctoresPreview');
-            container.innerHTML = '';
-
-            doctores.forEach(doctor => {
-                if (!doctor) return;
-                const card = document.createElement('div');
-                card.className = 'doctor-card';
-                card.innerHTML = `
-                    <div class="doctor-image">${doctor.foto}</div>
-                    <div class="doctor-info">
-                        <div class="doctor-name">${doctor.nombre}</div>
-                        <div class="doctor-specialty">${doctor.especialidad}</div>
-                        <div class="doctor-rating">⭐ Ver perfil</div>
-                    </div>
-                `;
-                card.addEventListener('click', () => verPerfilDoctor(doctor.id));
-                container.appendChild(card);
-            });
-        }
-
-        // ====== RENDERIZAR CARACTERÍSTICAS ======
-        function renderizarCaracteristicas() {
-            const container = document.getElementById('caracteristicasGrid');
-            container.innerHTML = '';
-            document.getElementById('caracteristicasTitle').textContent = config.caracteristicas_titulo || '¿Por qué elegir OdontoPluz?';
-
-            caracteristicas.forEach(car => {
-                if (!car || !car.titulo) return;
-                const item = document.createElement('div');
-                item.className = 'caracteristica-item';
-                item.innerHTML = `
-                    <div class="caracteristica-emoji">${car.emoji}</div>
-                    <div class="caracteristica-titulo">${car.titulo}</div>
-                    <div class="caracteristica-desc">${car.descripcion}</div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        // ====== INICIAR BOOKING ======
-        function iniciarBooking() {
-            document.getElementById('initialButton').style.display = 'none';
-            document.getElementById('bookingSection').style.display = 'block';
-            irAlPaso(1);
-        }
-
-        // ====== IR AL PASO ======
-        function irAlPaso(paso) {
-            estadoBooking.pasoActual = paso;
-            actualizarUI();
-        }
-
-        // ====== ACTUALIZAR UI ======
-        function actualizarUI() {
-            // Ocultar todos los pasos
-            document.getElementById('paso1').style.display = 'none';
-            document.getElementById('paso2').style.display = 'none';
-            document.getElementById('paso3').style.display = 'none';
-            document.getElementById('paso4').style.display = 'none';
-            document.getElementById('paso5').style.display = 'none';
-
-            // Mostrar paso actual
-            document.getElementById(`paso${estadoBooking.pasoActual}`).style.display = 'block';
-
-            // Actualizar indicadores de pasos
-            document.querySelectorAll('.paso').forEach((el, i) => {
-                el.classList.remove('activo');
-                if (i + 1 === estadoBooking.pasoActual) {
-                    el.classList.add('activo');
-                }
-            });
-
-            // Renderizar contenido según paso
-            if (estadoBooking.pasoActual === 1) {
-                renderizarServicios();
-            } else if (estadoBooking.pasoActual === 2) {
-                renderizarDoctoresSeleccion();
-            } else if (estadoBooking.pasoActual === 4) {
-                renderizarHorarios();
-            }
-        }
-
-        // ====== CREAR PASOS ======
-        function crearPasos() {
-            const container = document.getElementById('stepsContainer');
-            const pasos = ['Inicio', 'Servicio', 'Doctor', 'Fecha y Hora', 'Datos'];
-            container.innerHTML = pasos.map((p, i) => `<div class="paso">${i + 1}</div>`).join('');
-        }
-
-        // ====== RENDERIZAR SERVICIOS ======
-        function renderizarServicios() {
-            const container = document.getElementById('serviciosGrid');
-            container.innerHTML = '';
-
-            servicios.forEach(servicio => {
-                if (!servicio) return;
-                const card = document.createElement('div');
-                card.className = 'servicio-card';
-                if (estadoBooking.servicioSeleccionado === servicio.id) {
-                    card.classList.add('selected');
-                }
-                card.innerHTML = `
-                    <div class="servicio-emoji">${servicio.emoji}</div>
-                    <div class="servicio-nombre">${servicio.nombre}</div>
-                    <div class="servicio-duracion">${servicio.duracion} min</div>
-                `;
-                card.addEventListener('click', () => {
-                    estadoBooking.servicioSeleccionado = servicio.id;
-                    actualizarUI();
-                });
-                container.appendChild(card);
-            });
-        }
-
-        // ====== RENDERIZAR DOCTORES SELECCIÓN ======
-        function renderizarDoctoresSeleccion() {
-            const container = document.getElementById('doctoresSeleccionGrid');
-            container.innerHTML = '';
-
-            doctores.forEach(doctor => {
-                if (!doctor) return;
-                const card = document.createElement('div');
-                card.className = 'servicio-card';
-                if (estadoBooking.doctorSeleccionado === doctor.id) {
-                    card.classList.add('selected');
-                }
-                card.innerHTML = `
-                    <div class="servicio-emoji">${doctor.foto}</div>
-                    <div class="servicio-nombre">${doctor.nombre}</div>
-                    <div class="servicio-duracion">${doctor.especialidad}</div>
-                `;
-                card.addEventListener('click', () => {
-                    estadoBooking.doctorSeleccionado = doctor.id;
-                    actualizarUI();
-                });
-                container.appendChild(card);
-            });
-        }
-
-        // ====== RENDERIZAR HORARIOS ======
-        function renderizarHorarios() {
-            const container = document.getElementById('horariosGrid');
-            container.innerHTML = '';
-
-            const horariosDisponibles = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
-
-            horariosDisponibles.forEach(hora => {
-                const card = document.createElement('div');
-                card.className = 'servicio-card';
-                if (estadoBooking.horaSeleccionada === hora) {
-                    card.classList.add('selected');
-                }
-                card.innerHTML = `<div style="font-size: 1.2rem; font-weight: 600;">${hora}</div>`;
-                card.addEventListener('click', () => {
-                    estadoBooking.horaSeleccionada = hora;
-                    actualizarUI();
-                });
-                container.appendChild(card);
-            });
-        }
-
-        // ====== CONFIRMAR CITA ======
-        function confirmarCita(event) {
-            event.preventDefault();
-
-            const nombre = document.getElementById('nombre').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const telefono = document.getElementById('telefono').value.trim();
-
-            if (!nombre || !email || !telefono) {
-                mostrarModal('⚠️', 'Datos Incompletos', 'Por favor completa todos los campos requeridos.');
-                return;
-            }
-
-            const fecha = document.getElementById('datePicker').value;
-            if (!fecha) {
-                mostrarModal('⚠️', 'Fecha No Seleccionada', 'Por favor selecciona una fecha.');
-                return;
-            }
-
-            const servicio = servicios.find(s => s.id == estadoBooking.servicioSeleccionado);
-            const doctor = doctores.find(d => d.id == estadoBooking.doctorSeleccionado);
-            const fechaObj = new Date(fecha);
-            const fechaFormato = fechaObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-            mostrarModal('✅', '¡Cita Confirmada!', `Tu cita para ${servicio.nombre} con ${doctor.nombre} el ${fechaFormato} a las ${estadoBooking.horaSeleccionada}h ha sido confirmada.`);
-
-            resetearForm();
-        }
-
-        // ====== MOSTRAR MODAL ======
-        function mostrarModal(icon, title, message) {
-            const modal = document.getElementById('modal');
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-icon">${icon}</div>
-                    <h3 style="color: var(--primary); margin-bottom: 1rem; text-align: center;">${title}</h3>
-                    <p style="color: var(--secondary); margin-bottom: 1.5rem; text-align: center;">${message}</p>
-                    <button class="btn-primary" onclick="cerrarModal()" style="width: 100%;">Cerrar</button>
-                </div>
-            `;
-            modal.classList.add('active');
-        }
-
-        // ====== CERRAR MODAL ======
-        function cerrarModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
-        // ====== RESETEAR FORM ======
-        function resetearForm() {
-            estadoBooking = {
-                pasoActual: 1,
-                servicioSeleccionado: null,
-                doctorSeleccionado: null,
-                fechaSeleccionada: null,
-                horaSeleccionada: null,
-                nombre: '',
-                email: '',
-                telefono: '',
-                asunto: ''
-            };
-
-            document.getElementById('nombre').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('telefono').value = '';
-            document.getElementById('asunto').value = '';
-            document.getElementById('datePicker').value = '';
-
-            document.getElementById('bookingSection').style.display = 'none';
-            document.getElementById('initialButton').style.display = 'block';
-        }
-
-        // ====== VER PERFIL DOCTOR ======
-        function verPerfilDoctor(id) {
-            const doctor = doctores.find(d => d.id == id);
-            let especialidades = doctor.especialidades.join(', ');
-            const modal = document.getElementById('modal');
-
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-icon" style="font-size: 4rem; margin-bottom: 1rem;">${doctor.foto}</div>
-                    <h3 style="color: var(--primary); margin-bottom: 0.5rem; text-align: center;">${doctor.nombre}</h3>
-                    <p style="color: var(--primary-light); font-weight: 600; margin-bottom: 1rem; text-align: center;">${doctor.especialidad}</p>
-                    <p style="color: var(--secondary); margin-bottom: 1rem; text-align: justify;">${doctor.descripcion}</p>
-                    <p style="color: var(--text); font-weight: 600; margin-bottom: 0.5rem;">Especialidades:</p>
-                    <p style="color: var(--secondary); margin-bottom: 1.5rem;">${especialidades}</p>
-                    <button class="btn-primary" onclick="cerrarModal()" style="width: 100%;">Cerrar</button>
-                </div>
-            `;
-
-            modal.classList.add('active');
-        }
-
-        // ====== MOSTRAR ERROR ======
-        function mostrarError(mensaje) {
-            const container = document.querySelector('.container');
-            container.innerHTML = `<div style="text-align: center; padding: 2rem; color: red;"><p>${mensaje}</p></div>`;
-        }
-
-        // ====== INICIAR AL CARGAR PÁGINA ======
-        window.addEventListener('load', () => {
-            crearPasos();
-            cargarCSV();
-        });
-    </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRATAMIENTOS -->
+  <section id="tratamientos">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">Nuestros servicios</p>
+        <h2>Tratamientos</h2>
+        <p>Cada plan de tratamiento se diseña de forma individual, según el diagnóstico y los objetivos de cada paciente.</p>
+      </div>
+      <div class="treat-grid" id="treat-grid"></div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ ELEGIRNOS -->
+  <section id="nosotros" class="why">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">Por qué elegirnos</p>
+        <h2>Más que estética, recuperación funcional.</h2>
+        <p>No vendemos sonrisas perfectas: devolvemos calidad de vida a través de tratamientos pensados para cada paciente.</p>
+      </div>
+      <div class="why-grid" id="why-grid"></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section id="testimonios">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">Testimonios</p>
+        <h2>La confianza de nuestros pacientes.</h2>
+      </div>
+      <div class="testi-grid" id="testi-grid"></div>
+    </div>
+  </section>
+
+  <!-- GALERÍA -->
+  <section class="gallery">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">Galería</p>
+        <h2>Fotografía clínica real</h2>
+        <p>Espacio reservado para primeros planos y casos clínicos. Reemplaza cada bloque por una fotografía real, sin imágenes de stock.</p>
+      </div>
+      <div class="gal-scroller" id="gal-grid"></div>
+      <div class="gal-nav">
+        <button id="gal-prev" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button id="gal-next" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2>Resolvemos tus dudas</h2>
+      </div>
+      <div class="faq-list" id="faq-list"></div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="final-cta">
+    <div class="final-photo">
+      <div class="final-overlay">
+        <p class="eyebrow" style="color:#8fb0ff;margin-bottom:14px;">Espacio para foto real de la doctora — 1200 × 560 px</p>
+        <h2>Tu nueva sonrisa comienza hoy.</h2>
+        <a class="btn btn-primary wa-link" href="#" target="_blank" rel="noopener" data-msg="Hola, quiero agendar mi valoración en Odontopluz.">Agenda tu valoración</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">ODONTO<span>PLUZ</span></div>
+        <p style="font-size:14px;max-width:280px;">Odontología integral, estética dental y rehabilitación oral en Ciudad Bolívar, Venezuela.</p>
+      </div>
+      <div>
+        <h5>Contacto</h5>
+        <ul>
+          <li>Ciudad Bolívar, Venezuela<br><span style="font-size:12px;opacity:.6;">(añade tu dirección exacta)</span></li>
+          <li><a class="wa-link" href="#" target="_blank" rel="noopener" data-msg="Hola, quisiera más información sobre Odontopluz.">WhatsApp: +58 412-1216631</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Horario</h5>
+        <ul>
+          <li>Lun – Vie: 8:00 am – 6:00 pm</li>
+          <li>Sáb: 8:00 am – 12:00 pm</li>
+          <li style="font-size:12px;opacity:.6;">(edita este horario)</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Síguenos</h5>
+        <ul>
+          <li><a href="#" target="_blank" rel="noopener">Instagram (añade tu enlace)</a></li>
+          <li><a href="#">Aviso de privacidad</a></li>
+        </ul>
+      </div>
+      <div class="foot-map">Espacio para mapa (Google Maps embed)</div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Odontopluz. Todos los derechos reservados.</span>
+      <span>Tu sonrisa, nuestra prioridad.</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float wa-link" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp" data-msg="Hola, me gustaría solicitar información sobre Odontopluz.">
+  <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.29-1.39a9.9 9.9 0 0 0 4.7 1.2h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.24 0 4.35.87 5.94 2.46a8.23 8.23 0 0 1 2.42 5.85c0 4.56-3.72 8.28-8.35 8.28a8.3 8.3 0 0 1-4.22-1.15l-.3-.18-3.14.82.84-3.06-.2-.32a8.2 8.2 0 0 1-1.26-4.38c0-4.56 3.72-8.32 8.27-8.32M8.53 6.87c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.35.99 2.51c.12.16 1.7 2.72 4.2 3.7 2.08.82 2.5.66 2.95.62.45-.04 1.46-.6 1.66-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.46-.28-.24-.12-1.46-.72-1.68-.8-.23-.08-.4-.12-.56.12-.16.24-.64.8-.79.97-.14.16-.29.18-.53.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.5.11-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.56-1.36-.78-1.85-.2-.48-.4-.42-.56-.43-.14-.01-.3-.01-.46-.01Z"/></svg>
+</a>
+
+<script>
+/* ================= CONFIG ================= */
+const WHATSAPP_NUMBER = "584121216631";
+function waUrl(msg){
+  return "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg);
+}
+
+/* ================= WhatsApp links ================= */
+document.querySelectorAll(".wa-link").forEach(el=>{
+  el.href = waUrl(el.dataset.msg || "Hola, quisiera más información sobre Odontopluz.");
+});
+document.getElementById("wa-nav").href = waUrl("Hola, me gustaría agendar una valoración en Odontopluz.");
+
+/* ================= Before / After sliders ================= */
+document.querySelectorAll("[data-ba]").forEach(ba=>{
+  const after = ba.querySelector(".ba-after");
+  const handle = ba.querySelector(".ba-handle");
+  let dragging = false;
+
+  function setPos(clientX){
+    const rect = ba.getBoundingClientRect();
+    let pct = ((clientX - rect.left) / rect.width) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    after.style.clipPath = `inset(0 0 0 ${pct}%)`;
+    handle.style.left = pct + "%";
+  }
+  ba.addEventListener("mousedown", e=>{ dragging = true; setPos(e.clientX); });
+  window.addEventListener("mousemove", e=>{ if(dragging) setPos(e.clientX); });
+  window.addEventListener("mouseup", ()=> dragging = false);
+
+  ba.addEventListener("touchstart", e=>{ dragging = true; setPos(e.touches[0].clientX); }, {passive:true});
+  ba.addEventListener("touchmove", e=>{ if(dragging) setPos(e.touches[0].clientX); }, {passive:true});
+  ba.addEventListener("touchend", ()=> dragging = false);
+});
+
+/* ================= Treatments data ================= */
+const icon = {
+  rehab: `<path d="M4 13c0-5 3-9 8-9s8 4 8 9-3 8-8 8-8-3-8-8Z"/><path d="M9 12h6M12 9v6"/>`,
+  veneer: `<path d="M12 3c4 0 7 3 7 7 0 5-3 11-7 11S5 15 5 10c0-4 3-7 7-7Z"/>`,
+  denture: `<path d="M4 9c0-3 3-5 8-5s8 2 8 5-2 4-8 4-8-1-8-4Z"/><path d="M4 15c0 3 3 5 8 5s8-2 8-5"/>`,
+  implant: `<path d="M12 3v6M9 9h6l-1 5h-4l-1-5Z"/><path d="M10 14v4a2 2 0 0 0 4 0v-4"/>`,
+  ortho: `<path d="M4 8c2 4 4 4 4 8M20 8c-2 4-4 4-4 8M8 8h8"/>`,
+  whiten: `<path d="M12 3v3M5.5 6.5l2 2M18.5 6.5l-2 2M4 13h3M17 13h3"/><path d="M8 13c0 3 2 5 4 5s4-2 4-5-2-6-4-6-4 3-4 6Z"/>`,
+  general: `<path d="M6 3h12v5a6 6 0 0 1-12 0V3Z"/><path d="M9 14v3a3 3 0 0 0 6 0v-3"/>`
+};
+const treatments = [
+  {k:"rehab", t:"Rehabilitación Oral", d:"Reconstrucción completa de la sonrisa mediante prótesis, coronas y restauraciones.", msg:"Hola, quisiera información sobre Rehabilitación Oral."},
+  {k:"veneer", t:"Carillas Cerámicas", d:"Diseño de sonrisa completamente personalizado, preservando la estructura natural del diente.", msg:"Hola, quisiera información sobre Carillas Cerámicas."},
+  {k:"denture", t:"Prótesis Dentales", d:"Fijas, removibles o sobre implantes, adaptadas a cada caso clínico.", msg:"Hola, quisiera información sobre Prótesis Dentales."},
+  {k:"implant", t:"Implantes Dentales", d:"Reposición permanente de dientes perdidos con tecnología moderna.", msg:"Hola, quisiera información sobre Implantes Dentales."},
+  {k:"ortho", t:"Ortodoncia", d:"Corrección funcional y estética mediante distintos sistemas de ortodoncia.", msg:"Hola, quisiera información sobre Ortodoncia."},
+  {k:"whiten", t:"Blanqueamiento Dental", d:"Tratamientos profesionales para mejorar el color dental de forma segura.", msg:"Hola, quisiera información sobre Blanqueamiento Dental."},
+  {k:"general", t:"Odontología General", d:"Limpiezas, restauraciones, extracciones, endodoncia y evaluaciones.", msg:"Hola, quisiera información sobre Odontología General."},
+];
+const treatGrid = document.getElementById("treat-grid");
+treatments.forEach(tr=>{
+  const card = document.createElement("div");
+  card.className = "treat-card";
+  card.innerHTML = `
+    <div class="treat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${icon[tr.k]}</svg></div>
+    <h3>${tr.t}</h3>
+    <p>${tr.d}</p>
+    <a class="treat-link wa-link" href="#" target="_blank" rel="noopener" data-msg="${tr.msg}">
+      Solicitar información
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>`;
+  treatGrid.appendChild(card);
+  const link = card.querySelector(".wa-link");
+  link.href = waUrl(link.dataset.msg);
+});
+
+/* ================= Why choose us ================= */
+const whyIcon = {
+  a:`<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M5 21c0-4 3-6 7-6s7 2 7 6"/>`,
+  b:`<path d="M4 7l8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/>`,
+  c:`<path d="M9 3v4M15 3v4M4 9h16M6 9v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/>`,
+  d:`<path d="M12 3c4 0 7 3 7 7 0 5-3 11-7 11S5 15 5 10c0-4 3-7 7-7Z"/>`,
+  e:`<path d="M4 12h4l2-6 4 12 2-6h4"/>`,
+  f:`<path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3Z"/>`,
+};
+const whyItems = [
+  {k:"a", t:"Atención personalizada", d:"Cada tratamiento se diseña según el diagnóstico y los objetivos del paciente."},
+  {k:"b", t:"Tecnología moderna", d:"Equipos e insumos actualizados para diagnósticos precisos y tratamientos seguros."},
+  {k:"c", t:"Casos reales", d:"Mostramos resultados verdaderos, sin fotografías de stock."},
+  {k:"d", t:"Materiales de alta calidad", d:"Trabajamos con materiales premium que garantizan durabilidad y estética."},
+  {k:"e", t:"Diagnóstico completo", d:"Evaluación integral antes de proponer cualquier plan de tratamiento."},
+  {k:"f", t:"Resultados naturales", d:"Buscamos sonrisas armónicas, acordes a cada rostro y necesidad."},
+];
+const whyGrid = document.getElementById("why-grid");
+whyItems.forEach(w=>{
+  const item = document.createElement("div");
+  item.className = "why-item";
+  item.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${whyIcon[w.k]}</svg><h4>${w.t}</h4><p>${w.d}</p>`;
+  whyGrid.appendChild(item);
+});
+
+/* ================= Testimonials ================= */
+const testimonials = [
+  {n:"M. Fernández", txt:"Desde la primera consulta sentí confianza. Me explicaron cada paso del tratamiento y el resultado superó lo que esperaba.", i:"MF"},
+  {n:"R. González", txt:"La atención es muy humana y profesional. Se nota el cuidado en cada detalle, desde la limpieza hasta el trato con el paciente.", i:"RG"},
+  {n:"A. Torres", txt:"Recuperé la confianza para sonreír. El equipo estuvo pendiente de mí en todo el proceso, incluso después del tratamiento.", i:"AT"},
+];
+const testiGrid = document.getElementById("testi-grid");
+testimonials.forEach(t=>{
+  const card = document.createElement("div");
+  card.className = "testi-card";
+  card.innerHTML = `
+    <div class="stars">${'<svg viewBox="0 0 20 20"><path d="M10 1l2.6 5.9L19 7.6l-4.8 4.2L15.6 19 10 15.4 4.4 19l1.4-7.2L1 7.6l6.4-.7L10 1Z"/></svg>'.repeat(5)}</div>
+    <p>"${t.txt}"</p>
+    <div class="testi-who">
+      <div class="testi-avatar">${t.i}</div>
+      <div><span>${t.n}</span><small>Paciente Odontopluz</small></div>
+    </div>`;
+  testiGrid.appendChild(card);
+});
+
+/* ================= Gallery ================= */
+const galGrid = document.getElementById("gal-grid");
+for(let i=1;i<=6;i++){
+  const div = document.createElement("div");
+  div.className = "gal-item";
+  div.innerHTML = `<span>Foto clínica real<br>#${i} · 3:4</span>`;
+  galGrid.appendChild(div);
+}
+document.getElementById("gal-prev").addEventListener("click", ()=>{
+  galGrid.scrollBy({left:-270, behavior:"smooth"});
+});
+document.getElementById("gal-next").addEventListener("click", ()=>{
+  galGrid.scrollBy({left:270, behavior:"smooth"});
+});
+
+/* ================= FAQ ================= */
+const faqs = [
+  {q:"¿La valoración tiene costo?", a:"Escríbenos por WhatsApp y con gusto te daremos toda la información sobre el proceso de valoración."},
+  {q:"¿Cuánto dura un tratamiento?", a:"La duración depende del diagnóstico y del plan personalizado que se defina para cada paciente. Esto se explica en la valoración inicial."},
+  {q:"¿Trabajan con financiamiento?", a:"Cuéntanos tu caso por WhatsApp y te orientamos sobre las opciones disponibles."},
+  {q:"¿Atienden niños?", a:"Sí, además de odontología estética y rehabilitación oral, ofrecemos atención de odontología general para pacientes infantiles."},
+  {q:"¿Realizan implantes?", a:"Sí, contamos con implantes dentales como parte de nuestros tratamientos de rehabilitación oral."},
+  {q:"¿Cómo puedo agendar?", a:"Puedes escribirnos directamente por WhatsApp usando el botón de esta página y coordinamos tu valoración."},
+];
+const faqList = document.getElementById("faq-list");
+faqs.forEach(f=>{
+  const item = document.createElement("div");
+  item.className = "faq-item";
+  item.innerHTML = `
+    <button class="faq-q"><span>${f.q}</span><span class="plus"></span></button>
+    <div class="faq-a"><p>${f.a}</p></div>`;
+  faqList.appendChild(item);
+  const btn = item.querySelector(".faq-q");
+  const answer = item.querySelector(".faq-a");
+  btn.addEventListener("click", ()=>{
+    const isOpen = item.classList.contains("open");
+    document.querySelectorAll(".faq-item.open").forEach(o=>{
+      o.classList.remove("open");
+      o.querySelector(".faq-a").style.maxHeight = null;
+    });
+    if(!isOpen){
+      item.classList.add("open");
+      answer.style.maxHeight = answer.scrollHeight + "px";
+    }
+  });
+});
+
+/* ================= Mobile menu (simple) ================= */
+document.getElementById("burger").addEventListener("click", ()=>{
+  const links = document.querySelector(".nav-links");
+  const isShown = links.style.display === "flex";
+  links.style.cssText = isShown
+    ? "display:none;"
+    : "display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:#fff;padding:20px 24px;gap:18px;box-shadow:0 12px 24px rgba(0,0,0,.08);";
+});
+</script>
 </body>
 </html>
